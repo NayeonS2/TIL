@@ -195,18 +195,18 @@ print(result)
     
     - ```python
       for char in 'apple':
-              if char == 'b':
-                  print('b!')
-                  break
-          else:
-              print('b가 없습니다.')
+          if char == 'b':
+              print('b!')
+              break
+      else:
+          print('b가 없습니다.')
       
           # b가 없습니다.
       
           for char in 'banana':
               if char == 'b':
                   print('b!')
-                  break           # break로 중단됨 / else 구문 실
+                  break           # break로 중단됨 / else 구문 실행 x
           else:
               print('b가 없습니다.')
       
@@ -418,7 +418,7 @@ print(result)
       
       print(a,b,c,d) #1 2 3 4
       
-      ------------------------ # asterisk(*)활
+      ------------------------ # asterisk(*)활용
       nums = (1,2,3,4,5)
       a,b, *rest = nums
       print(a,b,rest) # 1 2 [3,4,5]
@@ -507,7 +507,7 @@ print(result)
   func()  #local 20
   print('global',a) #NameError: 'a' is not defined
   
-  #a는 함수 종류(return)후 수명주기 종료!
+  #a는 함수 종료(return)후 수명주기 종료!
   ```
 
 - 이름 검색 규칙 (Name Resolution) -> LEGB Rule
@@ -564,10 +564,12 @@ print(result)
         a = 3
     print(a) # 10
     func()
-    print(a) # 3
+    print(a) # 3    -> Local scope에서 global 변수 값의 변경,
+             #         global키워드를 사용하지 않으면, 
+             #         Local scope에 a변수가  생성됨  
     
     #parameter에 global 사용 불가
-    #global a 선언 전에는 a변수 사용 불가
+    #global a 선언 전에는 a변수 사용 불가 (ex. global a 선언전, print(a))
     ```
 
 - nonlocal
@@ -592,12 +594,9 @@ print(result)
     
     func()
     print(x) #0
-
-     # nonlocal은 이름공간상에 존재하는 변수만 가능!
-
-    ```
     
-   
+     # nonlocal은 이름공간상에 존재하는 변수만 가능!
+    ```
 
 > 함수 응용
 
@@ -624,10 +623,9 @@ print(result)
       boys = ['justin','eric']
       pair = zip(girls,boys)
       print(list(pair)) # [('jane','justin'),('ashley','eric')]
-
+      
       #복수의 iterable을 모아 튜플을 원소로 하는 zip object를 반환
       ```
-      
 
 - lambda
   
@@ -662,14 +660,20 @@ print(result)
     print(fact(4)) #24
     ```
 
-
 - base case에 도달할 때까지 함수 호출
 
 - 메모리 스택이 넘치게 되면 (stack overflow) 프로그램 동작 불가
 
 - 파이썬 maximum recursion depth가 1000번, 호출 횟수가 이를 초과하면 Recursion Error
 
+- 반복문과 재귀함수 비교:
+  
+  - 알고리즘 자체가 재귀적 표현이 자연스러우면 재귀함수 사용
+  - 재귀 호출은 변수 사용을 줄여줌
+  - 재귀 호출은 입력 값이 커질 수록 연산 속도가 오래 걸림   
+
 > 모듈
+
 - 모듈 : 다양한 기능을 하나의 파일로 묶은 것
 - 패키지 : 다양한 파일을 하나의 폴더로 묶은 것 
 - 라이브러리 : 다양한 패키지를 하나의 묶음으로
@@ -681,41 +685,45 @@ print(result)
   - $ pip install -r requirements.txt
 
 > 모듈과 패키지
-- 모듈 : 특정 기능을 하는 코드를 .py 단위로 작성한 것
-- 패키지 : 특정 기능 관련 모듈의 집합, 서브 패키지 포함
-```python
-import module 
-from module import var,fuction,Class
-from module import *
 
-from package import module
-from package.module import var,function,Class
+- 모듈 : 특정 기능을 하는 코드를 .py 단위로 작성한 것
+
+- 패키지 : 특정 기능 관련 모듈의 집합, 서브 패키지 포함
+  
+  ```python
+  import module 
+  from module import var,fuction,Class
+  from module import *
+  from package import module
+  from package.module import var,function,Class
+  ```
+  
+  > 사용자 모듈과 패키지
+
+```
+ - my_package
+   - calculator
+     - __init__.py
+     - tools.py
+   - __init__.py
+   - check.py
 ```
 
-> 사용자 모듈과 패키지
-  ```
-  my_package
-    calculator
-      __init__.py
-      tools.py
-    __init__.py
-    check.py
-  ```
-  ```python
-  # tools.py
-  def add(num1,num2):
-    return num1 + num2
-  def minus(num1,num2):
-    return num1 - num2
-  # check.py
-  from calculator import tools
-  print(dir(tools))
-  print(tools.add(1,2))
-  ```
+```python
+# tools.py
+def add(num1,num2):
+  return num1 + num2
+def minus(num1,num2):
+  return num1 - num2
+# check.py
+from calculator import tools
+print(dir(tools))
+print(tools.add(1,2))
+```
 
-  > 가상환경
-  ```python
-  $ python -m venv venv
-  $ source venv/Scripts/activate #나만의 가상환경
-  ```
+> 가상환경
 
+```python
+$ python -m venv venv
+$ source venv/Scripts/activate #나만의 가상환경
+```
