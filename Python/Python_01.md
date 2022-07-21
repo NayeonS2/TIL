@@ -167,11 +167,9 @@
   print(5)
   print = 'hi'
   print(5) # TypeError: 'str' object is not callable
+  # 내장 함수 print가 아닌, 문자열 hi가 할당된 변수 print로 사용됨
   ```
 
-# 내장 함수 print가 아닌, 문자열 hi가 할당된 변수 print로 사용됨
-
-```
 > 연산자
 
 - 산술 연산자 (Arithmetic Operator)
@@ -360,7 +358,7 @@ print(i**j) # 5의 3제곱 = 125
     print(f'오늘은 {today:%y}년 {today:%m}월 {today:%d})
     
     pi = 3.141592
-    print(f'원주율은 {pi:.3}. 반지름이 2일 때 원의 넓이는 {pi*2*2}')
+    print(f'원주율은 {pi:.2f}. 반지름이 2일 때 원의 넓이는 {pi*2*2}')
     
     #원주율은 3.14. 반지름이 2일때 원의 넓이는 12.566368
     ```
@@ -440,8 +438,11 @@ print(3.0 == 3) #True
   - 논리 연산자의 단축 평가
     
     - 결과가 확실한 경우 두번째 값은 확인하지 않고 첫번째 값 반환
+    
     - and 연산에서 첫번째 값이 False인 경우 무조건 False -> 첫번째 값 반환
+    
     - or 연산에서 첫번째 값이 True인 경우 무조건 True -> 첫번째 값 반환
+    
     - ```python
       print(3 and 5) # 5
       print(3 and 0) # 0
@@ -498,4 +499,174 @@ print(3.0 == 3) #True
 
 - () or tuple() 통해 생성
 
-- 
+- 시퀀스이기에 인덱스로 접근 가능
+
+- 단일 항목 튜플의 경우 값 뒤에 쉼표 필수 (ex. (1, ))
+
+- 복수 항목의 경우에는 필수는 아니나, 권장 (ex. (1, 2, 3,))
+
+- 튜플 대입 (Tuple assignment)
+  
+  - 우변의 값을 좌변의 변수에 한 번에 할당
+  
+  - 일반적으로 파이썬 내부에서 활용
+  
+  - 함수에서 복수의 값을 반환 시 활용
+  
+  - ```python
+    x, y = 1, 2   # (1, 2) 실제 튜플로 처리
+    print(x, y)  
+    ```
+
+> Range (시퀀스형)
+
+- 숫자의 시퀀스를 나타냄
+
+- 주로 반복문과 함께 사용
+  
+  - 기본형 range(n)
+  
+  - 범위 지정 range(n, m)
+  
+  - 범위 및 스텝 지정 range(n, m, s)
+    
+    ```python
+    print(list(range(1, 5, 2))) # [1, 3]
+    
+    # 역순
+    print(list(range(6, 1, -1))) # [6, 5, 4, 3, 2]
+    print(list(range(6, 1, -2))) # [6, 4, 2]
+    print(list(range(6, 1, 1))) # []
+    ```
+
+> 슬라이싱 연산자
+
+- 시퀀스를 특정 단위로 슬라이싱
+
+- 콜론 기준, 앞 인덱스 해당 문자는 포함 but 뒤 인덱스 해당 문자는 미포함
+
+- ```python
+  # 리스트 (k 간격으로)
+  print([1, 2, 3, 5][0:4:2]) # [1, 3]
+  #튜플
+  print((1, 2, 3, 5)[0:4:2]) # (1, 3)
+  #range
+  print(range(10)[1:5:3]) # range(1,5,3)
+  #문자열
+  print('abcdefg'[1:3:2]) # b
+  print('abcdefghi'[5:2:-1]) # 'fed' 
+  ```
+
+- ```python
+  s = 'abcdefghi'
+  s[::] = 'abcdefghi' = s[0:len(s):1]
+  s[::-1] = 'ihgfedcba' = s[-1:-(len(s)+1):-1]
+  ```
+
+> 셋 (비시퀀스형)
+
+- Set은 중복되는 요소 없이, 순서에 상관없는 데이터들의 묶음
+
+- 데이터 중복을 허용하지 않아, 중복 원소는 하나만 저장
+  
+  ```python
+  print({1, 2, 3, 1, 2}) # {1, 2, 3} 중복 제거
+  ```
+
+- 순서가 없기에 인덱스 통한 접근 불가
+
+- 집합 연산이 가능
+
+- 가변 자료형 (mutable) -> 담고 있는 요소 삽입 변경 삭제 가능
+
+- {} or set() 을 통해 생성 -> 빈 set 생성을 위해선 반드시 set()  
+
+- Set을 활용하면 중복 값 제거 가능, But 이 후 순서가 무시됨 !
+
+- 셋 (Set) 연산자
+  
+  ```python
+  A = {1, 2, 3, 4}
+  B = {1, 2, 3, "Hello", (1, 2, 3)}
+  #합집합
+  print(A | B) # {1, 2, 3, 4, (1, 2, 3), "Hello"}
+  #교집합
+  print(A & B) # {1, 2, 3}
+  #차집합
+  print(B - A) # {(1, 2, 3), "Hello"}
+  #대칭차집합
+  print(A ^ B) # {"Hello", 4, (1, 2, 3)} 둘이 안 겹치는거
+  #여집합은 없음
+  ```
+
+> 딕셔너리 (비시퀀스형) - 3.7부터는 ordered/ 이하 버전은 unordered
+
+- key-value 쌍으로 이뤄진 자료형
+
+- key는 변경 불가능한 데이터(immutable)만 활용 가능
+  
+  - string, integer, float, boolean, tuple, range
+
+- values 는 어떤 형태든 관계 x
+
+- {} or dict() 통해 생성
+
+> 형 변환 (Typecasting)
+
+- 파이썬에서 데이터 형태는 서로 변환 가능
+  
+  - 암시적 형 변환 (implicit)
+    
+    : 사용자가 의도하지 않고, 파이썬 내부적으로 자료형을 변환
+    
+    - bool
+    
+    - Numeric type (int, float)
+      
+      ```python
+      print(True + 3) # 4 (bool)
+      
+      print(3 + 5.0) # 8.0 (Numeric type - int, float)
+      ```
+  
+  - 명시적 형 변환 (explicit)
+    
+    : 사용자가 특정 함수를 활용해 의도적으로 자료형 변환
+    
+    - int
+      
+      - str (형식에 맞는 문자열만 가능) , float -> int
+      
+      ```python
+      print(int('3') + 4) # 7
+      
+      print(int('3.5') + 5) # ValueError 
+      # -> 정수 형식이 아닌 경우 타입 변환 불가
+      ```
+    
+    - float
+      
+      - str (형식에 맞는 문자열만), int -> float
+      
+      ```python
+      print(float('3')) # 3.0
+      
+      print(float('3/4') + 5.3) # ValueError
+      # -> float 형식이 아닌 경우 타입 변환 불가
+      ```
+    
+    - str
+      
+      - int, float, list, tuple, dict -> str
+      
+      ```python
+      print(str(1)) # 1
+      print(str(1.0)) # 1.0
+      print(str([1, 2, 3]) # [1, 2, 3]
+      print(str((1, 2, 3))) # (1, 2, 3)
+      print(str({1, 2, 3})) # {1, 2, 3}
+      ```
+
+> 컨테이너 형 변환
+
+![https://user-images.githubusercontent.com/18046097/61180466-a6a67780-a651-11e9-8c0a-adb9e1ee04de.png](https://user-images.githubusercontent.com/18046097/61180466-a6a67780-a651-11e9-8c0a-adb9e1ee04de.png)
