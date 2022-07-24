@@ -409,7 +409,7 @@ print(result)
       ```python
       nums = (1,2,3,4)
       
-      print(numbers) #(1,2,3,4)
+      print(nums) #(1,2,3,4)
       ```
     
     - 언패킹 : 시퀀스 속 요소들을 여러 변수에 나누어 할당
