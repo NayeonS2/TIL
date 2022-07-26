@@ -237,8 +237,6 @@
 
 ---
 
-
-
 ## 비시퀀스형 데이터 구조
 
 > 셋
@@ -266,15 +264,20 @@
     s.issubset(t) : 셋s가 셋t의 하위 셋인 경우, True
     s.issuperset(t) : 셋s가 셋t의 상위 셋인 경우, True
     ```
+  
   - s.update(*others)
+    
     - ```python
       a = {'사과', '바나나'}
       a.update({'딸기', '바나나', '참외'})
       
       print(a)    # {'참외', '딸기', '바나나', '사과'}
       ```
+  
   - s.remove(x) : 삭제할 항목 없으면 keyerror
+  
   - s.discard(x) : 삭제할 항목 없어도 에러 안남
+    
     - ```python
       a = {'사과', '바나나'}
       a.update({'딸기', '바나나', '참외'})
@@ -284,15 +287,20 @@
       print(a)    # {'참외', '바나나', '사과'}
       a.remove('딸기')
       print(a)    # KeyError: '딸기'
-      
+      ```
       
       a.discard('바나나')
       print(a)    # {'딸기', '사과', '참외'}
       a.discard('바나나')
       print(a)    # {'딸기', '사과', '참외'} -> 에러 발생 x
+      
       ```
-  - s.pop() : 셋은 순서가 없기때문에 임의의 원소 제거, 반환
-  - s.clear() : 원소 모두 제거 -> set() 출력
+      
+      ```
+
+- s.pop() : 셋은 순서가 없기때문에 임의의 원소 제거, 반환
+
+- s.clear() : 원소 모두 제거 -> set() 출력
 
 - 집합 관련 함수
   
@@ -332,51 +340,51 @@
     d.pop(k)
     d.pop(k, v)
     d.update([other])
-    
+    ```
     
     ```
+    
+    ```
+
+- d.get(key[,default])
   
-  - d.get(key[,default])
-    
-    - key를 통해 value 가져옴
-    
-    - KeyError 발생 x
-    
-    - default값 설정 가능 (기본 : None)
-    
-    - d[key] 는 key가 없을때 KeyError
+  - key를 통해 value 가져옴
   
-  - d.pop(key[,default])
-    
-    - key가 딕셔너리에 있으면 제거하고 해당 값 반환
-    
-    - 그렇지 않으면 default 반환
-    
-    - default 값이 없으면 KeyError
-    
-    - ```python
-      my_dict = {'apple':'사과', 'banana':'바나나'}
-      data = my_dict.pop('apple') # key값
-      print(data, my_dict)    # 사과 {'banana': '바나나'}
-      
-      data = my_dict.pop('apple')
-      print(data) # KeyError: 'apple'
-      
-      data = my_dict.pop('apple',0)
-      print(data) # 0
-      ```
+  - KeyError 발생 x
   
-  - d.update()
+  - default값 설정 가능 (기본 : None)
+  
+  - d[key] 는 key가 없을때 KeyError
+
+- d.pop(key[,default])
+  
+  - key가 딕셔너리에 있으면 제거하고 해당 값 반환
+  
+  - 그렇지 않으면 default 반환
+  
+  - default 값이 없으면 KeyError
+  
+  - ```python
+    my_dict = {'apple':'사과', 'banana':'바나나'}
+    data = my_dict.pop('apple') # key값
+    print(data, my_dict)    # 사과 {'banana': '바나나'}
     
-    - ```python
-      my_dict = {'apple':'사', 'banana':'바나나'}
-      my_dict.update(apple='사과') # key = value
-      print(my_dict)  # {'apple': '사과', 'banana': '바나나'}
-      ```
+    data = my_dict.pop('apple')
+    print(data) # KeyError: 'apple'
+    
+    data = my_dict.pop('apple',0)
+    print(data) # 0
+    ```
+
+- d.update()
+  
+  - ```python
+    my_dict = {'apple':'사', 'banana':'바나나'}
+    my_dict.update(apple='사과') # key = value
+    print(my_dict)  # {'apple': '사과', 'banana': '바나나'}
+    ```
 
 ---
-
-
 
 ## 얕은 복사와 깊은 복사
 
@@ -427,3 +435,199 @@
   b[2][0] = 0
   print(a,b)  # [1, 2, ['a', 'b']] [1, 2, [0, 'b']] # b만 바뀜
   ```
+
+## Python 03 포인트!!!
+
+> Dictionary
+
+- D.update([other])
+  
+  - ```python
+    my_dict = {'apple': '사과', 'banana': '바나나', 'melon': '멜론'}
+    my_dict.update(apple = '사과아',coconut = '코코넛') # 키값은 따옴표 제외
+    print(my_dict)
+    #{'apple': '사과아', 'banana': '바나나', 'melon': '멜론', 'coconut': '코코넛'}
+    
+    d = {'mango':'망고','watermelon':'수박'}
+    my_dict.update(d) 
+    print(my_dict)
+    '''
+    {'apple': '사과아',
+     'banana': '바나나',
+     'melon': '멜론',
+     'coconut': '코코넛',
+     'mango': '망고',
+     'watermelon': '수박'}
+    '''
+    ```
+
+> String
+
+- S.strip()
+  
+  - ```python
+    a = '   hello!  \n'
+    b = 'hihihihahahahihi'
+    c = 'monty python'
+    
+    
+    print(a.strip()) #'hello!'
+    print(a.lstrip()) #'hello!  \n'
+    print(b.rstrip('hi')) #'hihihihahaha'
+    print(b.lstrip('hi')) #'ahahahihi'
+    
+    print(c.rstrip(' python')) #m
+    
+    # monty만 남을것같지만 '공백,p,y,t,h,o,n' 이 들어간 모든 문자를 제거해서
+    
+    #m만 남게됨!!!!!
+
+
+    www = 'www.saffy.com'
+    print(www.strip('.')) #www.saffy.com
+    # 왼쪽과 오른쪽에서 부터 시작해서 다른 문자를 만나면 탐색 중지
+
+
+    # isspace()
+    a = '    n'
+    b = '\n \t '
+
+    print(a.isspace()) # False
+    print(b.isspace()) # True
+
+
+    # join()
+
+    words = ['안녕', 'hello']
+    ''.join(words) #'안녕hello'
+
+
+    ```
+    
+    
+
+> List
+
+- L.sort()
+
+- ```
+  .sort() : 원본 변경 (원본에서 진행해야되므로 .이 붙음), None 반환
+  sorted() : 새롭게 정렬된 것을 반환
+  ```
+  
+  - ```python
+    # sort
+    print(lotto.sort()) #None
+    print(lotto) #[10, 11, 18, 21, 41, 43]
+    print(lotto.sort(reverse=True) #None
+    print(lotto) #[43, 41, 21, 18, 11, 10]
+    
+    #sorted
+    import random
+    lotto = random.sample(range(1, 46), 6)
+    print(lotto, sorted(lotto))
+    print(lotto)
+    #[24, 27, 20, 45, 33, 2] 
+    #[2, 20, 24, 27, 33, 45]
+    #[24, 27, 20, 45, 33, 2]
+    ```
+
+> 얕은복사와 깊은복사
+
+- **변경 불가능한 (immutable) 데이터**
+  
+  - 리터럴
+    
+    - 숫자/ 글자/ 참거짓
+  
+  - range()
+  
+  - tuple()
+  
+  - frozenset()
+  
+  - ```python
+    a = 20
+    b = a
+    b = 10
+    
+    print(a) #  b와함께 바뀌지않음
+    print(b)
+    ```
+
+- 변경 가능한 (mutable) 데이터
+  
+  - 할당
+    
+    - ```python
+      original_list = [1, 2, 3]
+      
+      copy_list = original_list
+      print(copy_list) #[1, 2, 3]
+      
+      copy_list[0] = 5
+      print(original_list) #[5, 2, 3]
+      
+      print(id(copy_list),id(original_list)) # 동일 주소 공유
+      ```
+  
+  - 얕은복사
+    
+    - ```python
+      # slice 연산자 사용 [:]
+      a = [1, 2, 3]
+      b = a[:]
+      b[0] = 5
+      print(a,b) #[1, 2, 3] [5, 2, 3]
+      
+      #list() 활용
+      a = [1, 2, 3]
+      b = list(a)
+      b[0] = 5
+      print(a,b) #[1, 2, 3] [5, 2, 3]
+      
+      #copy모듈 활용
+      import copy
+      a = [1,2,3]
+      b = copy.copy(a)
+      b[0] = 5
+      print(a,b) #[1, 2, 3] [5, 2, 3]
+      
+      
+        ```
+      
+    
+    - ```python
+      #하지만, 이렇게 하는 것도 일부 상황에만 
+      #서로 다른 얕은 복사(shallow copy)입니다.
+      #2차원 리스트와 같이 mutable 객체 안에 mutable 객체가 있는 경우 
+      #문제가 됩니다. 아래 예시를 통해 확인해봅시다.
+      
+      a = [1, 2, [1, 2]]
+      
+      b = a[:]
+      b[2][0] = 5
+      print(a,id(a),b,id(b))  
+      # 동일주소는 아님 but, 2차원이상부턴 다시 주소공유
+      #a와 b의 id는 다르다는 것을 확인하였지만, 내부 값은 영향을 받게 되었습니다.
+      
+      print(id(a[2]),id(b[2])) 
+      #내부의 객체 id(a[2])과 id(b[2])은 같은 주소를 바라보고 있기 때문입니다.
+      ```
+
+  - 깊은복사
+    - 만일 중첩된 상황에서 복사를 하고 싶다면, 깊은 복사(deep copy)
+    - 깊은 복사는 새로운 객체를 만들고 원본 객체 내에 있는 객체에 대한 복사를 재귀적으로 삽입
+    - 즉, 내부에 있는 모든 객체까지 새롭게 값이 변경
+    - ```python
+      import copy
+
+      a = [1, 2, [1, 2]]
+      b = copy.deepcopy(a)
+
+      b[2][0] = 3
+      print(a,b) #[1, 2, [1, 2]] [1, 2, [3, 2]]
+      ```
+
+
+- 
