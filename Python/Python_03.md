@@ -92,11 +92,11 @@
   
   - 'separator'.join([iterable])
   
-  - s.capitalize() : 가장 첫 글자를 대문자로
+  - s.capitalize() : 가장 첫 글자를 대문자로 (원본유지)
   
-  - s.title() : 띄어쓰기 기준, 각 단어 첫글자는 대문자로 나머지는 소문자로
+  - s.title() : 띄어쓰기 기준, 각 단어 첫글자는 대문자로 나머지는 소문자로, 어포스트로피(')나 공백 이후를 대문자로 만들어 반환 (원본유지)
   
-  - s.upper()
+  - s.upper() : (원본유지)
   
   - s.lower()
   
@@ -157,7 +157,7 @@
       # ['starbucks', 'tomntoms', 'hollys', 'coffee', 'c', 'u', 'p']
       ```
   
-  - L.remove(x)
+  - L.remove(x) : 리스트에서 값이 x인 첫번째 항목을 삭제, 항목이 없으면 ValueError가 발생
     
     - ```python
       nums = [1, 2, 3, 'hi']
@@ -181,6 +181,14 @@
   - L.index(x) : x 값을 찾아 index 반환 / 없으면 Value Error
   
   - L.count(x)
+    - ```python
+      # 원하는 값을 모두 삭제하려면 다음과 같이 할 수 있습니다.
+      a = [1, 2, 1, 3, 4]
+      target_value = 1
+      for i in range(a.count(target_value)):
+          a.remove(target_value)
+      print(a)
+      ```
   
   - L.sort() : 원본 리스트를 정렬함 (원본 바꿈) . None 반환
     
@@ -199,7 +207,7 @@
       # [3, 2, 6, 8] [2, 3, 6, 8]
       ```
   
-  - L.reverse() : 원본을 뒤집음
+  - L.reverse() : 원본을 뒤집음, 내장함수 reversed() 와는 다르게 원본 list를 변형시키고, None을 리턴
     
     - ```python
       nums = [3, 2, 5, 1]
@@ -241,13 +249,14 @@
 
 > 셋
 
-- 중복 요소 없음
+- 중복 요소 없음 
 
-- 순서 없음
+- 순서 없음 (unordered)
 
 - 집합 연산 가능
+- 순회가능 (iterable)
 
-- mutable
+- 변경가능 (mutable)
 
 - 셋 메서드
   
@@ -265,13 +274,18 @@
     s.issuperset(t) : 셋s가 셋t의 상위 셋인 경우, True
     ```
   
-  - s.update(*others)
+  - s.update(*others) : 여러 값을 추가, 반드시 iterable 데이터 구조를 전달
     
     - ```python
       a = {'사과', '바나나'}
       a.update({'딸기', '바나나', '참외'})
       
       print(a)    # {'참외', '딸기', '바나나', '사과'}
+
+      a = {'사과', '바나나', '수박'}
+      a.update({'토마토', '토마토', '딸기'}, {'포도', '레몬'})
+      print(a) 
+      # {'토마토', '바나나', '수박', '사과', '레몬', '포도', '딸기'}
       ```
   
   - s.remove(x) : 삭제할 항목 없으면 keyerror
@@ -326,6 +340,9 @@
     ```
 
 > 딕셔너리
+- 변경 가능하고(mutable)
+- 순서가 없고(unordered),
+- 순회 가능한(iterable)
 
 - 딕셔너리 메서드
   
@@ -352,7 +369,7 @@
   
   - KeyError 발생 x
   
-  - default값 설정 가능 (기본 : None)
+  - default값 설정 가능 (기본 : None) <- key가 존재하지 않을 경우 None을 반환
   
   - d[key] 는 key가 없을때 KeyError
 
@@ -460,10 +477,20 @@
      'watermelon': '수박'}
     '''
     ```
+- .setdefault(key[, default]) : 
+  - dict.get() 메서드와 비슷한 동작을 하는 메서드로, key가 딕셔너리에 있으면 value를 돌려줌
+  - key가 딕셔너리에 없을 경우, default 값을 갖는 key 를 삽입한 후 default 를 반환한다는 점입니다. 만일 default가 주어지지 않을 경우, None 
+  - ```python
+    my_dict = {'apple': '사과', 'banana': '바나나', 'melon': '멜론'}
+    my_dict.setdefault('pineapple', '파인애플') # '파인애플'
+    print(my_dict) # {'apple': '사과', 'banana': '바나나', 'melon': '멜론', 'pineapple': '파인애플'}
+    ```
+
+
 
 > String
 
-- S.strip()
+- S.strip() : 특정한 문자들을 지정하면 **문자열의 모든 조합을 제거**합니다. 인자가 없을 경우 공백을 제거
   
   - ```python
     a = '   hello!  \n'
@@ -486,23 +513,27 @@
     www = 'www.saffy.com'
     print(www.strip('.')) #www.saffy.com
     # 왼쪽과 오른쪽에서 부터 시작해서 다른 문자를 만나면 탐색 중지
+    ```  
+- S.split([chars]) : 문자열을 특정한 단위로 나누어 **리스트**로 반환
+  - ```python
+    'a_b_c'.split('_') #['a', 'b', 'c']       
+    ```
 
+- S.isspace()
 
-    # isspace()
+  - ```python
     a = '    n'
     b = '\n \t '
 
     print(a.isspace()) # False
     print(b.isspace()) # True
-
-
-    # join()
-
-    words = ['안녕', 'hello']
-    ''.join(words) #'안녕hello'
-
-
     ```
+
+-  'separator'.join(iterable)
+   -  ```python
+      words = ['안녕', 'hello']
+      ''.join(words) #'안녕hello'
+      ```
     
     
 
@@ -531,6 +562,25 @@
     #[2, 20, 24, 27, 33, 45]
     #[24, 27, 20, 45, 33, 2]
     ```
+- L.append(x) : 리스트에 값을 추가 (a[len(a):] = [x])
+- L.extend(iterable) : 리스트에 iterable(list, range, tuple, string) 값을 붙일 수가 있음 (a[len(a):] = iterable)
+  - ```python
+    cafe.extend(['twosome_place']) 
+    #['starbucks', 'tomntoms', 'hollys', 'banapresso', 'wcafe', '빽다방', 'twosome_place']
+    cafe.extend('ediya') 
+    #['starbucks', 'tomntoms', 'hollys', 'banapresso', 'wcafe', '빽다방', 'twosome_place', 'e', 'd', 'i', 'y', 'a']
+    ```
+- L.insert(i,x) : 정해진 i 위치에 값 추가
+  - ```
+    # a.insert(0, x)는 리스트의 처음에 x를 삽입하고,
+    # a.insert(len(a), x) 는 a.append(x) 와 같습니다.
+    # 리스트의 길이를 넘어서는 인덱스는 마지막에 아이템이 추가됩니다.
+    ```
+
+
+
+
+
 
 > 얕은복사와 깊은복사
 
