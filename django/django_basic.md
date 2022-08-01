@@ -230,13 +230,17 @@ DATABASES = {
 ## 1. superuser 생성하기
 
 - `python [manage.py](<http://manage.py>) runserver` 이후 [](http://127.0.0.1:8000/admin/)http://127.0.0.1:8000/admin/로 접속하면 로그인 페이지가 뜸
+
 - 모든 권한을 가지는 슈퍼 사용자를 생성해야 함
+  
   - `(myvenv) ~/djangogirls$ python manage.py createsuperuser`
+  
   - 사용자명, 이메일, 패스워드 작성하기# jangogirls
     
     <h6><참조> : [](https://tutorial.djangogirls.org/ko/django_models/)[들어가며 · HonKit](https://tutorial.djangogirls.org/ko/)</h6>
     
     # 가상환경(Venv)
+    
     - 프로젝트 기초 전부를 Python/Django와 분리해줌
     - 즉, 웹사이트가 변경되어도 개발 중인 것에 영향을 주지 않는다는 것
     
