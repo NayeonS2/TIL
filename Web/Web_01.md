@@ -151,12 +151,12 @@
 
 
 > form (중요!!! - django)
-- \<form\>은 정보를 서버에 제출하기위해 사용하는 태그
+- **\<form\>은 정보를 서버에 제출하기위해 사용하는 태그**
 - ex) 로그인창
 - action : form을 처리할 서버의 URL (데이터를 보낼 곳)
   - ex) 네이버, 구글
-- method : form을 제출할 때 사용할 HTTP메서드 (GET, POST)
-- enctype : method가 post인 경우 데이터의 유형
+- **method** : form을 제출할 때 사용할 HTTP메서드 (GET, POST)
+-** enctype** : method가 post인 경우 데이터의 유형
   - application/x-www-form-urlencoded : 기본값
   - multipart/form-data: 파일 전송시 (input type이 file인 경우)
 - ```python
@@ -186,11 +186,11 @@
   ```
 > input 유형 - 일반
   - 일반적으로 입력을 받기 위해 제공되며 타입별로 HTML기본 검증 혹은 추가 속성 활용가능
-  - text : 일반 텍스트 입력
-  - password : 입력 시 값이 보이지않고 문자를 특수기호(*)로 표현
-  - email : 이메일 형식이 아니면 form 제출 불가
-  - number : min, max, step속성을 활용하여 숫자 범위 설정 가능
-  - file : accept 속성을 활용하여 파일 타입 지정 가능
+  - **text** : 일반 텍스트 입력
+  - **password** : 입력 시 값이 보이지않고 문자를 특수기호(*)로 표현
+  - **email** : 이메일 형식이 아니면 form 제출 불가
+  - **number** : min, max, step속성을 활용하여 숫자 범위 설정 가능
+  - **file** : accept 속성을 활용하여 파일 타입 지정 가능
 
 > input 유형 - 항목 중 선택
 - 일반적으로 label 태그와 함께 사용하여 선택항목 작성
@@ -232,12 +232,12 @@
 
 
 > CSS 정의 방법
-- 인라인 (inline)
+- **인라인 (inline)**
   - ```python
     <h1 style="color:blueviolet; font-size:100px;">오옹오오오옹</h1>
     ```
 
-- 내부참조 (embedding) - \<style\>
+- **내부참조 (embedding) - \<style\>**
   - ```python
     <style>
         h1 {
@@ -248,13 +248,13 @@
 
     </style>
     ```
-- 외부참조 (link file) *** - 분리된 CSS 파일
+- **외부참조 (link file) *** - 분리된 CSS 파일**
   - ```python
     <link rel="stylesheet" href="mystyle.css">
     ```
 
 > **CSS Selectors** (중요 !!!!! *****)
-- 기본 선택자
+- **기본 선택자**
   - 전체 선택자, 요소 선택자 (HTML 태그를 직접 선택)
   - 클래스 선택자 (마침표. 문자로 시작, 해당 클래스가 적용된 항목을 선택), 아이디 선택자 (#문자로 시작, 해당 아이디가 적용된 항목 선택, **일반적으로 하나의 문서에 1번만 사용** (중복 x), 여러번 사용해도 동작하지만 단일 id사용을 권장), 속성 선택자
   - ```python
@@ -279,7 +279,7 @@
       color: purple;    # id 선택자
     }
     ```
-- 결합자 (combinators)
+- **결합자 (combinators)**
   - 자손 결합자, 자식 결합자
   - 일반 형제 결합자, 인접 형제 결합자
   - ```python
@@ -332,7 +332,7 @@ p {
 }
 ```
 
-> CSS 상속
+> **CSS 상속**
 - 상속을 통해 부모요소 속성을 자식에게 상속
 - 상속되는 것 :
   - **Text 관련요소** (font, color, text-align), opacity, visibility
@@ -358,7 +358,7 @@ p {
   ```  
 
 > CSS 기본 스타일
-- 크기단위
+- **크기단위**
   - px (픽셀)
     - 모니터 해상도의 한 화소인 픽셀 기준
     - 픽셀의 크기는 변하지 않기 때문에 고정적 단위
@@ -395,12 +395,12 @@ p {
   </body>
   ```
 
-> 크기단위 (viewport)
+> **크기단위 (viewport)**
 - 웹 페이지를 방문한 유저에게 바로 보이게되는 웹 컨텐츠의 영역 (디바이스 화면)
 - **디바이스의 viewport를 기준으로 상대적인 사이즈가 결정됨**
 - **vw** (브라우저 크기에 따라 크기가 변함), vh, vmin, vmax
 
-> 색상단위
+> **색상단위**
 - 색상키워드
   - 대소문자 구분 x
   - red, blue, black 같은 특정 색을 직접 글자로 나타냄
@@ -412,7 +412,7 @@ p {
 
 ---
 
-> 결합자 심화
+> **결합자 심화**
 - 자손 결합자
   - selectorA 하위의 모든 selectorB 요소
   - ```python
@@ -447,7 +447,7 @@ p {
     }
     ```
 
-> CSS Box model
+> **CSS Box model**
 - 모든 HTML 요소는 네모(박스모델)
 - **위에서부터 아래로, 왼쪽에서 오른쪽으로** 쌓인다 (Normal flow)
   - content : 실제 내용
@@ -470,7 +470,7 @@ p {
 - 그경우 box-sizing을 border-box로 설정
 
 
-> CSS Display
+> **CSS Display**
 - display : block
   - 줄 바꿈이 일어나는 요소
   - 화면 크기 전체의 가로 폭을 차지
@@ -500,7 +500,7 @@ p {
 
 
 
-> CSS Position
+> **CSS Position**
 - 레이아웃 설정할 때
 - 문서 상에서 요소의 위치 결정
 - static : 모든 태그의 기본값
@@ -510,8 +510,8 @@ p {
 - sticky (스크롤에따라 static->fixed)
 
 
-> CSS 원칙
-- 원칙 1,2 : Normal flow
+> **CSS 원칙**
+- 원칙 1,2 : **Normal flow**
   - 모든 요소는 박스모델, 좌측 상단에 배치
   - display에 따라 크기와 배치가 달라짐
 - 원칙 3 : position으로 위치 기준 변경
