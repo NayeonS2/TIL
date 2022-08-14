@@ -3,6 +3,7 @@
 ## Brute Force 알고리즘
 - 본문 문자열을 처음부터 끝까지 차례대로 순회하면서 패턴 내의 문자들을 일일이 비교하는 방식
 <img src="./algo_03_img/bruteforce.png">
+
 - ```python
     p = 'is'
     t = 'This is a book~!'
@@ -27,6 +28,7 @@
 
     print(bruteforce(p,t))  # 2
   ```
+  
 - 시간 복잡도
     - 최악의 경우 모든 위치에서 패턴을 비교해야 하므로 O(MN)이 됨
 
