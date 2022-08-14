@@ -2,7 +2,7 @@
 
 ## Brute Force 알고리즘
 - 본문 문자열을 처음부터 끝까지 차례대로 순회하면서 패턴 내의 문자들을 일일이 비교하는 방식
-- <img src="./bruteforce.png">
+- <img src="./algo_03_img/bruteforce.png">
 - ```python
     p = 'is'
     t = 'This is a book~!'
@@ -37,10 +37,10 @@
 - 불일치가 발생한 텍스트 문자열의 앞 부분에 어떤 문자가 있는지를 미리 알고있으므로, 불일치가 발생한 앞 부분에 대하여 다시 비교하지 않고 매칭을 수행
 - 패턴내에서 반복하는 구간이 있을것이라는 전제하에 진행, 반복이 없다면 무의미함
 - 시간 복잡도 : O(M + N)
-<img src="./kmp_01.png">
-<img src="./kmp_02.png">
-<img src="./kmp_03.png">
-<img src="./kmp_04.png">
+<img src="./algo_03_img/kmp_01.png">
+<img src="./algo_03_img/kmp_02.png">
+<img src="./algo_03_img/kmp_03.png">
+<img src="./algo_03_img/kmp_04.png">
 
 - 전처리 (Preprocessing)
     - 패턴에 대한 리턴 인덱스를 생성하는 것이 목적
@@ -109,8 +109,8 @@
   - 찾으려는 문자열 패턴 길이 M, 총 문자열 길이 N
 - 장점 : 원본 문자열을 모두 보지 않아도 검색 가능
 - 단점 : 구현이 비교적 복잡함
-<img src="./boyermoore_01.png">
-<img src="./boyermoore_02.png">
+<img src="./algo_03_img/boyermoore_01.png">
+<img src="./algo_03_img/boyermoore_02.png">
 - ```python
     def pre_process(pattern):
         M = len(pattern)  # 패턴의 길이
