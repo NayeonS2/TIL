@@ -2,7 +2,7 @@
 
 ## Brute Force 알고리즘
 - 본문 문자열을 처음부터 끝까지 차례대로 순회하면서 패턴 내의 문자들을 일일이 비교하는 방식
-- <img src="./algo_03_img/bruteforce.png">
+<img src="./algo_03_img/bruteforce.png">
 - ```python
     p = 'is'
     t = 'This is a book~!'
@@ -111,6 +111,7 @@
 - 단점 : 구현이 비교적 복잡함
 <img src="./algo_03_img/boyermoore_01.png">
 <img src="./algo_03_img/boyermoore_02.png">
+
 - ```python
     def pre_process(pattern):
         M = len(pattern)  # 패턴의 길이
@@ -152,4 +153,3 @@
 
     print(boyer_moore(text, pattern))   # 15
   ```
-
