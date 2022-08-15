@@ -15,18 +15,32 @@
         i = 0
 
         while j < M and i < N:
-            if t[i] != p[j]:
-                i = i-j
-                j = -1
+            if t[i] != p[j]:    # 값이 다르면
+                i = i-j     # 비교할 시작값을 배열 한칸 우측으로 이동
+                j = -1      # 패턴 시작 값은 0으로 변경해서 다시 비교 (아래 코드가 실행되어 j+1을 해줘서 j = 0이 되고, i = i - j + 1이 됨)
             i += 1
             j +=1
 
         if j == M:
-            return i-M
+            return i - j
         else:
             return -1
 
     print(bruteforce(p,t))  # 2
+    -----------------------------
+
+    def bruteforce2(p, t):
+        j = 0
+        i = 0
+
+        while i != N and j != M:
+            if t[i] == p[j]:
+                i += 1
+                j += 1
+            else:
+                i = i - j + 1
+                j = 0
+        return i - j if j == M else -1
   ```
   
 - 시간 복잡도
@@ -41,8 +55,9 @@
 - 시간 복잡도 : O(M + N)
 <img src="./algo_03_img/kmp_01.png">
 <img src="./algo_03_img/kmp_02.png">
-<img src="./algo_03_img/kmp_03.png">
 <img src="./algo_03_img/kmp_04.png">
+<img src="./algo_03_img/kmp_03.png">
+
 
 - 전처리 (Preprocessing)
     - 패턴에 대한 리턴 인덱스를 생성하는 것이 목적
@@ -68,11 +83,11 @@
     def pre_process(p):
         lps = [0] * len(p)
 
-        j = 0
+        j = 0   
 
-        for i in range(1, len(p)):
+        for i in range(1, len(p)):  # 항상 lps[0]==0이므로 while문은 i==1부터 시작
             if p[i] == p[j]:
-                lps[i] = j + 1
+                lps[i] = j + 1  
                 j += 1
             else:
                 j = 0
@@ -87,14 +102,14 @@
         j = 0
 
         while i < len(t):
-            if p[j] == t[i]:
+            if p[j] == t[i]:    # 문자열이 같은 경우 양쪽 인덱스를 모두 증가시킴
                 i += 1
                 j += 1
             else:
-                if j != 0:
-                    j = lps[j-1]
+                if j != 0:  # Pattern을 찾지 못한 경우
+                    j = lps[j-1]    # j!=0인 경우는 짧은 lps에 대해 재검사
                 else:
-                    i +=1
+                    i +=1   # j==0이면 일치하는 부분이 없으므로 인덱스 증가
             if j == len(p):
                 return i - j
         else:
@@ -131,7 +146,7 @@
 
         i = 0  # text index
         while i <= len(text) - M:
-            j = M - 1   # 뒤에서 비교해야 되기 때문 j를 끝에 index
+            j = M - 1   # 뒤에서부터 비교해야 되기 때문 j를 끝에 index
             k = i + (M-1)  # 비교를 시작할 위치 (현재위치 + M번째 인덱스)
 
             # 비교할 j가 남아있고, text와 pattern이 일치하면
@@ -145,7 +160,7 @@
             # 일치하지 않는다면
             else:
                 # i를 비교할 시작 위치를 skip table에서 가져온다.
-                i += skip_table.get(text[i+M-1], M)
+                i += skip_table.get(text[i+M-1], M) # text의 y에서 틀린 경우 1칸점프, h에서 틀린경우 M=3칸 점프 
 
         return -1  # 일치되는 패턴이 없음
 
