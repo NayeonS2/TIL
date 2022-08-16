@@ -1,5 +1,95 @@
 # 03. 문자열 (String)
 
+
+> 문자의 표현
+- 메모리는 숫자만을 저장
+- 영어는 52개, 6비트면 표현가능 (64가지)
+- 지역별 코드 체계 상이 -> 표준안 (ASCII)
+- ASCII : 7bit 인코딩으로 128문자 표현, 33개 출력 불가 제어문자, 공백을 비롯한 95개 출력가능 문자
+- '' : false / ' ' : True
+- A : 65 / a : 97
+- 확장 아스키 : 표준 문자 외 악센트, 도형, 특수문자, 특수기호 등 128개 추가 
+- 표준 아스키는 7bit / 확장 아스키는 1B내 8bit 모두 사용
+- 표준 아스키는 세계적 통용/ 대부분 ASCII형식을 사용
+- 미국 외 나라들에서는 자국 문자 표현을 위해 코드체계를 만들어 사용
+- 다국어 처리를 위해 표준을 마련 -> 유티코드 
+- 우리나라 -> 한글 코드체계 (조합형 VS. 완성형)
+- 유니코드
+  - UCS-2
+  - UCS-4
+  - 유니코드를 저장하는 변수 크기 정의
+  - BUT 바이트 순서에 대해 표준화하지 못함
+  - 파일이 UCS-2인지 UCS-4인지 인식 후 각 경우를 구분해 모두 다르게 구현해야함
+  - 적당한 외부 인코딩 필요
+- little-endian: 12|34 / big-endian: 34|12 (메모리가 더적음)
+- 유니코드 인코딩
+  - UTF-8 (in web)
+    - MIN : 8bit, MAX:32bit (1 Byte * 4)
+  - UTF-16 (in windows, java)
+    - MIN : 16bit, MAX : 32bit (2 Byte * 2)
+  - UTF-32 (in unix)
+    - MIN : 32bit, MAX: 32bit (4 Byte * 1)
+- Python 인코딩
+  - 3.x버전에서는 유니코드 UTF-8 생략가능
+  - **cp-949**는 윈도우에서 사용하는 인코딩인데 이것때문에 오류 가끔 발생
+
+
+> 문자열
+  - fixed length
+  - variable length
+    - length controlled (java)
+    - delimited (C)
+
+> Python에서의 문자열 처리
+- char 타입 없음
+- 텍스트 데이터 취급방법 통일
+- 문자열 기호
+  - ', '', ''',"""
+  - '+' (연결)
+  - '*' (반복)
+- 문자열은 시퀀스 자료형 (인덱싱, 슬라이싱 가능) **
+- replace(), split(), isalpha(), find()
+- 문자열은 튜플과 같이 요소값 변경 불가 (immutable) ***
+
+---
+
+> 문자열 뒤집기
+- 자기문자열에서 뒤집기 / 새로운 빈 문자열 만들어 소스 뒤에서 부터 읽어서 타겟에 쓰는 방법
+- s = s[::-1]
+- s = 'abcd
+- s = list(s)
+- s.reverse()
+- s = ''.join(S)
+- ```python
+    s = 'Reverse this String.'
+
+    new_s = ''
+    for i in range(len(s)-1,-1,-1):
+        new_s += s[i]
+    print(new_s)
+
+
+    list_s = list(s)
+    for idx in range(len(s)//2):
+        list_s[idx], list_s[-1-idx] = list_s[-1-idx], list_s[idx]
+    print(''.join(list_s))
+  ```
+
+
+
+> 문자열 비교
+- is : 값, 객체 / == : 값
+- ```python
+    s1 = 'abc'
+    s2 = 'abc'
+    s3 = 'def'
+    s4 = s1
+    s5 = s1[:2] + 'c'
+    print(s1 == s5) # True
+    print(s1 is s5) # False 다른 문자열의 조합이라 메모리가 같지않음!!!
+  ```
+---
+
 ## Brute Force 알고리즘
 - 본문 문자열을 처음부터 끝까지 차례대로 순회하면서 패턴 내의 문자들을 일일이 비교하는 방식
 <img src="./algo_03_img/bruteforce.png">
