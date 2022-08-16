@@ -97,8 +97,8 @@
 - ```python
     p = 'is'
     t = 'This is a book~!'
-    M = len(p)  # 찾을 패턴 길이
-    N = len(t)  # 전체 텍스트 길이
+    M = len(p)  # 찾을 패턴길이
+    N = len(t)  # 전체 텍스트길이
 
     def bruteforce(p, t):
         j = 0
