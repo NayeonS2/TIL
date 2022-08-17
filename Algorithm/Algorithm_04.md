@@ -127,7 +127,7 @@
 
 
 > 스택의 응용2 : function call
-- Function cal
+- Function call
     - 함수 내부에서 또다른 함수 호출하면 스택 쌓임
     - 프로그램에서의 함수 호출과 복귀에 따른 수행 순서를 관리
     - 가장 마지막에 호출된 함수가 가장 먼저 실행을 완료하고 복귀하는 후입선출 구조, 후입선출 구조의 스택을 이용하여 수행순서 관리
@@ -160,7 +160,8 @@
     f(0, N)             # 0번 원소부터 N개의 원소에 접근
     print(B)            # [1, 2, 3]
   ```
-> Memoization
+> Memoization (Top-down)
+- DP (Dynamic Programming)의 한 종류
 - 피보나치 수열의 Call Tree
   - 엄청난 중복 호출 (O(2^N))
 - 메모이제이션은 컴퓨터 프로그램을 실행할때 이전에 계산한 값을 메모리에 저장해서 매번 다시 계산하지 않도록 하여 전체적 실행속도를 빠르게 하는 기술 (동적 계획법의 핵심이 되는 기술)
@@ -169,27 +170,27 @@
   # memo를 위한 배열을 할당, 모두 0으로 초기화
   # memo[0]을 0으로, momo[1]은 1로 초기화
   # n = 7 일때 fib(2)~fib(6)값을 memo에 저장에서 사용 (함수 반복 호출 x)
-    def fibo1(n):
+    def fibo_recur(n):
         if n<2:
             return n
         else:
-            return fibo1(n-1) + fibo1(n-2)
+            return fibo_recur(n-1) + fibo_recur(n-2)
 
     for i in range(21):
-        print(i,fibo1(i))
+        print(i,fibo_recur(i))
     #-----------------------------------------   
 
-    def fibo2(n):    # memoization
-        if memo[n] == -1:
-            memo[n] = fibo2(n-1) + fibo2(n-2)
-        return memo[n]
+    def fibo_memo(n):    # memoization
+        if memo[n] == -1:   # n번째 값을 계산하지 않았을 경우, 재귀호출로 계산
+            memo[n] = fibo_memo(n-1) + fibo_memo(n-2)
+        return memo[n]  # n번째 피보나치 값이 memo에 있을경우 
 
 
     memo = [-1] * 101
     memo[0] = 0
     memo[1] = 1
     for i in range(101):    # 훨씬 빠름
-        print(i,fibo2(i))
+        print(i,fibo_memo(i))
   ```
 
 ---
@@ -197,22 +198,24 @@
 > DP (Dynamic Programming)
 - 동적 계획 알고리즘은 그리디 알고리즘과 같이 최적화 문제를 해결하는 알고리즘임
 - 먼저 입력크기가 작은 부분 문제들을 모두 해결한 후에 그 해들을 이용하여 보다 큰 크기의 부분 문제들을 해결하여, 최종적으로 원래 주어진 문제를 해결하는 알고리즘
+    - **Memoization vs. Tabulation**
 
 > 피보나치 수 DP 적용
 - 피보나치 수는 부분 문제의 답으로부터 본 문제의 답을 얻을 수 있으므로 최적 부분 구조로 이루어짐
-    - 부분 문제로 나눔
-    - 가장 작은 부분 문제부터 해를 구함
-    - 결과를 **테이블**에 저장, 저장된 부분문제 해를 이용하여 상위 문제 해를 구함
+    - > Tabulation (Bottom-up)
+        - 부분 문제로 나눔
+        - 가장 작은 부분 문제부터 해를 구함
+        - 결과를 **테이블**에 저장, 저장된 부분문제 해를 이용하여 상위 문제 해를 구함
 - ```python
-  def fibo_dp(n):
+  def fibo_tabul(n):
     table[0] = 0
     table[1] = 1
-    for i in range(2, n+1):
+    for i in range(2, n+1):     # 점화식 이용하여 n까지 구하기
         table[i] = table[i-1] + table[i-2]
     return
 
     table = [0] * 101       # 미리 구해서 한번에 채워놓고 꺼내씀!
-    fibo_dp(100)
+    fibo_tabul(100)
     print(table[20])
 
     #---------------------------------
@@ -239,7 +242,7 @@
   - 깊이 우선 탐색 (Depth First Search, DFS) *
   - 너비 우선 탐색 (Breadth First Search, BFS)
 - ex) 선형 - 1:1 / 1:n - 트리 / n:n - 그래프
-- 시작 **정점(출발점)**의 한 방향으로 갈 수 있는 경로가 있는 곳까지 깊이 탐색해 가다가 더이상 갈 곳이 없게 되면, 가장 마지막에 만났던 갈림길 간선이 있는 정점으로 되돌아와서 다른 방향의 정점으로 탐색을 계속 반복하여 결국 **모든 정점을 방문**하는 순회 방법
+- **시작 정점**의 한 방향으로 갈 수 있는 경로가 있는 곳까지 깊이 탐색해 가다가 더이상 갈 곳이 없게 되면, 가장 마지막에 만났던 갈림길 간선이 있는 정점으로 되돌아와서 다른 방향의 정점으로 탐색을 계속 반복하여 결국 **모든 정점을 방문**하는 순회 방법
 -  가장 **마지막에 만났던 갈림길의 정점**으로 되돌아가서 **다시 깊이 우선 탐색**을 반복해야하므로 **후입선출 구조의 스택** 사용
    -  스택 / 재귀 호출 둘다 경로 저장 가능
    -  스택을 사용해서 dfs가 아니라 그냥 모든 정점을 방문하는 방식 자체인 것!
