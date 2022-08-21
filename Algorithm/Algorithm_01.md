@@ -194,6 +194,44 @@
                 if i3 != i1 and i3 != i2:
                     print(i1, i2, i3)
   ```
+  ```python
+  def recursive_permutation(arr, depth, n, r):
+    if depth == r:
+        print(arr[:depth])
+        return
+    
+    for i in range(depth, n):
+        swap(arr, depth, i)
+        recursive_permutation(arr, depth + 1, n, r)
+        swap(arr, depth, i)
+
+  def swap(arr, depth, i):
+      arr[i], arr[depth] = arr[depth], arr[i]
+
+  arr = [1, 2, 3]
+  recursive_permutation(arr, 0, 3, 2)
+  ```
+  ```python
+  def dfs(arr, depth, n, r):
+      if depth == r:
+          print(result)
+          return
+      
+      for i in range(n):
+          if not visited[i]:
+              visited[i] = True
+              result[depth] = arr[i]
+              dfs(arr, depth + 1, n, r)
+              visited[i] = False
+
+  arr = [1, 2, 3]
+  n, r = len(arr), 2
+
+  visited = [False for _ in range(n)]
+  result = [0 for _ in range(r)]
+  dfs(arr, 0, n, r)
+  ```
+
 
 
 > 탐욕 (Greedy) 알고리즘
