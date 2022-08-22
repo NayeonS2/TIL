@@ -46,7 +46,7 @@
 - 2) 연산자를 만나면 필요한 만큼의 피연산자를 스택에서 pop하여 연산, 연산 결과를 다시 스택에 push
 - 3) 수식이 끝나면 마지막으로 스택을 pop하여 출력
 - ```python
-  oper = ['+','-','*','/']
+    oper = ['+','-','*','/']
 
     equation = '6528-*2/+'
 
@@ -100,15 +100,93 @@
 
 > Powerset(부분집합) 생성
 - loop 이용
+  - ```python
+    bit = [0,0,0,0]
+    for i in range(2):
+      bit[0] = i
+      for j in range(2):
+          bit[1] = j
+          for k in ragne(2):
+              bit[2] = k
+              for l in range(2):
+                  bit[3] = l
+                  print(bit)
+    ```
+- 백트래킹 이용
+  - **{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}의 powerset 중 원소의 합이 10인 부분집합을 구하시오**
+    - ```python
+        def f(i, N):
+            global answer
+            global cnt
+            cnt + =1    
+            if i == N:
+                s = 0 # 부분집합의 합
+                for i in range(N):
+                    if bit[i]:
+                        # print(A[i], end=' ')
+                        s += A[i]
+                # print()
+                if s == 10:
+                    answer += 1
+            else:
+                bit[i] = 1
+                f(i + 1, N)
+                bit[i] = 0
+                f(i + 1, N)
+
+        A = [1, 2, 3, 4, 5, 6 , 7, 8, 9, 10]
+        bit = [0] * 10
+        f(0, 10, 0, 4)
+        print(answer, cnt) # 10 2047
+
+        ### 백트래킹 적용하기( 목표값보다 큰 경우)
+
+
+        def f(i, N, s, t):
+            global answer
+            global cnt
+            cnt += 1
+
+            if i == N:  # 모든 원소가 고려된 경우
+                if s == t:  # 부분집합의 합이 t면
+                    answer += 1
+                return
+            elif s > t:  # 탐색 중 합이 t보다 커지면
+                return
+            else:
+                f(i + 1, N, s + A[i], t)  # A[i]가 포함된 경우
+                f(i + 1, N, s, t)  # A[i]가 포함되지 않은 경우
+
+        answer = 0
+        cnt = 0
+        A = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        bit = [0] * 10
+        f(0, 10, 0, 10)
+
+        print(answer, cnt)  # 10 111
+
+
+        ### 백트래킹 추가해보기( 남은 원소의 합을 다 더해도 T미만인 경우)
+      ```
+
+> 순열
 - ```python
-  bit = [0,0,0,0]
-  for i in range(2):
-    bit[0] = i
-    for j in range(2):
-        bit[1] = j
-        for k in ragne(2):
-            bit[2] = k
-            for l in range(2):
-                bit[3] = l
-                print(bit)
-                
+    def f(i, N):
+        if i == N:
+            print(p)
+        else:
+            for j in range(i, N):
+                P[i], P[j] = P[j], P[i]
+                f(i+1, N);
+                P[i], P[j] = P[j], P[i]
+
+    P = [1, 2, 3]
+    f(0,3)
+  ```
+        
+
+
+
+
+    
+    
