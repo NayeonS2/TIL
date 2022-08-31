@@ -494,7 +494,7 @@ def dinner(request):
 
 </body>
 </html>
-
+```
 
 ### Template inheritance
 
