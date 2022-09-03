@@ -131,13 +131,13 @@
 - django가 모델에 생긴 변화 (필드추가, 수정 등)를 실제 db에 반영하는 방법
 
 > Migrations 관련 주요 명령어
-- **makemigrations**
+- <mark>makemigrations</mark>
     - $ python manage.py makemigrations
     - '테이블을 만들기 위한 설계도를 생성하는 것'
     - 모델을 작성 혹은 변경한 것에 기반한 새로운 migration(설계도, 청사진 이하 마이그레이션)을 만들때 사용
     - 설계도 생성
     - 명령어 실행 후 migrations/0001_initial.py가 생성된 것을 확인
-- **migrate**
+- <mark>migrate</mark>
     - $ python manage.py migrate
     - makemigrations로 만든 설계도를 실제 db.sqlite3 DB파일에 반영하는 과정
     - 결과적으로 모델 변경사항과 DB의 스키마가 동기화
@@ -145,12 +145,12 @@
     - <img src="./django02_img/migration.png">
 
 > Migrations 기타 명령어
-- 1. showmigrations
+- 1. <mark>showmigrations</mark>
     - $ python manage.py showmigrations
     - migrations 파일들이 migrate 됐는지 안됐는지 여부를 확인하는 용도
-    - [x] 표시가 있으면 migrate가 완료되었음을 의미
+    - '[x]' 표시가 있으면 migrate가 완료되었음을 의미
 
-- 2. sqlmigrate
+- 2. <mark>sqlmigrate</mark>
     - $ python manage.py sqlmigrate articles 0001
     - 해당 migrations 파일이 SQL 문으로 어떻게 해석될 지 미리 확인 할 수 있음    
 
@@ -195,7 +195,9 @@
 - django 입장에서는 이미 존재하는 테이블에 새로운 컬럼이 추가되는 요구 사항을 받았는데, 이 컬럼들은 기본적으로 빈 값으로 추가될 수 없음
 - 그래서 django는 우리에게 추가되는 컬럼에 대한 기본값을 설정해야하니 어떻게 어떤값을 설정할 것인지를 물어보는 과정을 진행
 - 보기 1번 : 다음 화면으로 넘어가서 새 컬럼의 기본값을 직접 입력하는 방법
+    - django가 알아서 설정
 - 보기 2번 : 현재 과정에서 나가고 모델 필드에 default 속성을 직접 작성하는 방법
+    - 나가서 직접 수정 후 다시 migrate로 DB에 저장
 - 1을 입력 후 enter (created_at 필드에 대한 default 값 설정)
 - <img src="./django02_img/modelspy_mig2.png">
 - 다음 화면에서 아무것도 입력하지 않고 enter입력하면 django에서 기본적으로 파이썬의 timezone 모듈의 now 메서드 반환값을 기본값으로 사용하도록 해줌
@@ -213,10 +215,10 @@
 - python의 datetime.datetime 인스턴스로 표시되는 날짜 및 시간을 값으로 사용하는 필드
 - DateField를 상속받는 클래스
 - 선택인자
-    - 1) auto_now_add
+    - 1) <mark>auto_now_add</mark>
         - 최초 생성 일자 (useful for creation of timestamps)
         - django ORM이 최초 insert (테이블에 데이터 입력)시에만 현재 날짜와 시간으로 갱신(테이블에 어떤값을 최초로 넣을때)
-    - 2) auto_now
+    - 2) <mark>auto_now</mark>
         - 최초 수정 일자 (useful for "last-modified" timestamps)
         - django ORM이 save를 할때마다 현재 날짜와 시간으로 갱신
 > Model 정리
@@ -240,13 +242,13 @@
 - django-extensions
   - django 확장 프로그램 모음
   - shell_plus, graph model등 다양한 확장 기능 제공
-- Sell
+- Shell
   - 운영체제 상에서 다양한 기능과 서비스를 구현하는 인터페이스를 제공하는 프로그램
   - 셸(껍데기)은 사용자와 운영체제 내부사이의 인터페이스를 감싸는 층이기 때문에 그러한 이름이 붙음
   - "사용자 <-> 셸 <-> 운영체제"
 - Pytho Shell
   - 파이썬 코드를 실행해주는 인터프리터
-  - 인터프리터 : 코들르 한줄씩 읽어내려가며 실행하는 프로그램
+  - 인터프리터 : 코드를 한줄씩 읽어내려가며 실행하는 프로그램
   - 인터렉티브 혹은 대화형 shell이라고 부름
   - python 명령어를 실행하여 그 결과를 바로 제공
   - ```python
@@ -259,6 +261,7 @@
   - 원래는 $ python manage.py shell 명령어를 통해 django shell을 사용하지만
   - django-extension이 제공하는 더 강력한 shell_plus로 진행
     - $ python manage.py shell_plus
+    - 자동 import !!!
     - <img src="./django02_img/shell1.png">
     - <img src="./django02_img/shell2.png">
 
@@ -279,12 +282,14 @@
   - 원하는 데이터를 얻기위해 데이터베이스에 요청을 보낼 코드를 작성한다.
 - 이때 파이썬으로 작성한 코드가 ORM에 의해 SQL로 변환되어 데이터베이스에 전달되며, 데이터베이스의 응답데이터를 ORM이 **QuerySet**이라는 자료형태로 변환하여 우리에게 전달
 
-> QuerySet
+> <mark>QuerySet</mark>
+- DB 데이터를 담고있는 유사리스트!!!
+- But, [-1] 등의 음수 인덱스는 사용 불가 !
 - 데이터베이스에게서 전달받은 객체 목록(데이터 모음)
   - 순회 가능 데이터로써 1개이상의 데이터를 불러와 사용할 수 있음
-- Django ORM을 통해 만들어진 자료형이며, 필터를 걸거나 정렬등을 수행할 수 있음
+- Django ORM을 통해 만들어진 자료형이며, **필터**를 걸거나 **정렬**등을 수행할 수 있음
 - "objects" manager를 사용하여 복수의 데이터를 가져오는 queryset method를 사용할때 반환되는 객체
-- 단 데이터베이스가 단일한 객체를 반환할때는 QuerySet이 아닌 모델(Class)의 인스턴스로 반환됨
+- 단 데이터베이스가 **단일한 객체를 반환**할때는 **QuerySet이 아닌 모델(Class)의 인스턴스**로 반환됨
 
 > QuerySet API
 - "QuerySet과 상호작용하기 위해 사용하는 도구 (메서드, 연산자 등)"
@@ -330,19 +335,27 @@
   - <img src="./django02_img/read01.png">
   - QuerySet return
   - 전체 데이터 조회
-- get()
-  - 단일 데이터 조회
+- <mark>get()</mark>
+  - **단일 데이터 조회**
   - 객체를 찾을 수 없으면 DoesNotExist 예외를 발생시키고,
   - 둘 이상의 객체를 찾으면 MultipleObjectsReturned 예외를 발생시킴
   - 위와 같은 특징을 갖고있기 때문에 primary key와 같이 **고유성(uniqueness)을 보장하는 조회**에서 사용해야함
   - <img src="./django02_img/read02.png">
-- filter()
+- <mark>filter()</mark>
   - 지정된 조회 매개 변수와 일치하는 객체를 포함하는 새 QuerySet을 반환
+  - 없어도 오류가 안남
   - <img src="./django02_img/read03.png">
-- Field lookups
+- <mark>Field lookups</mark>
   - 특정 레코드에 대한 조건을 설정하는 방법
   - QuerySet 메서드 filter(), exclude() 및 get()에 대한 키워드 인자로 지정됨
   - 다양한 built-in-lookups는 공식문서 참고
+    - iexact
+    - contains
+    - icontains
+    - in
+    - gt
+    - lte
+    - startswith
   - <img src="./django02_img/read04.png">
 
 > UPDATE
@@ -360,4 +373,137 @@
   - <img src="./django02_img/delete02.png">
   - <img src="./django02_img/delete03.png">
 
-### CRUD with view functions
+
+### HTTP method GET 재검토
+- /articles/create/?title=11&content=22 와같은 url로 요청이 보내짐
+- <mark>GET</mark>
+  - 특정 리소스를 가져오도록 요청할 때 사용
+  - 반드시 데이터를 가져올때만 사용해야함
+  - DB에 변화를 주지않음
+    - **DB에 변화를 주는 CREATE, UPDATE, DELETE에서는 사용하지않기**로 약속!!
+    - **대신 POST를 사용!**
+  - CRUD에서 READ를 담당
+  - 길이제한이 있음
+
+- <mark>POST</mark>
+  - 서버로 데이터 전송
+  - 서버에 변경사항 만듦
+  - 데이터를 HTTP body에 담아 전송
+  - GET의 쿼리스트링 파라미터와 다르게 URL로 데이터를 보내지 않음
+  - CUD 역할
+
+
+
+## CRUD with view functions
+
+### base.html 작성
+```html
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}
+        {% endblock title %}
+    </title>
+    <link href="<https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css>" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+</head>
+<body>
+   
+    {% block content %}
+    {% endblock content %}
+
+    <script src="<https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js>" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+</body>
+</html>
+```
+
+```python
+# settings.py
+'TEMPLATES = [
+    {
+        ...,
+        'DIRS': [BASE_DIR / 'templates',],
+        ...
+    }
+]
+```
+
+### url 분리 및 연결
+```python
+# articles/urls.py
+
+from django.urls import path
+
+app_name = 'articles'
+urlpatterns = [
+
+]
+
+# crud/urls.py
+
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('articles/', include('articles.urls')),
+]
+```
+
+### index 페이지 작성
+
+```python
+# articles/urls.py
+
+from django.urls import path
+from . import views
+
+app_name = 'articles'
+urlpatterns = [
+    path('', views.index, name='index'),
+]
+
+
+# articles/views.py
+
+def index(request):
+    return render(request, 'articles/index.html')
+
+```
+```html
+
+# templates/articles/index.html
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Articles</h1>
+{% endblock content %}
+```
+
+## READ 1 (index page)
+> 전체 게시글 조회
+- index 페이지에서는 전체 게시글을 조회해서 출력
+```python
+# articles/views.py
+
+from .models import Article
+
+def index(request):
+    articles = Article.objects.all()
+    context = {
+        'articles' : articles,
+    }
+    return render(request, 'articles/index.html', context)
+
+
+
+
+
+
+
+

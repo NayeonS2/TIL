@@ -590,3 +590,128 @@ def dinner(request):
   {% endblock content %}
   ```
 
+## Variable Routing
+- url 주소를 변수로 사용하는 것
+- url 일부를 변수로 지정하여 view 함수의 인자로 넘길수있음
+- 변수는 <>에 정의, view함수 인자로 할당
+- 기본타입은 str
+- 5가지 타입으로 명시 가능
+- ex) path('hello/\<name>/\<int:age>/', views.hello, name='hello'), 
+- query string parameter -> 사용자의 입력 필요
+- variable routing -> 주소이동할때 path의 일부분을 변수로 사용/ 사용자입력 x
+- path('hello/\<name>/', views.hello)
+- hello/ssafy/ -> name에 할당
+- \<name> 뿐아니라 \<age>등 추가 인자 받기 가능! 
+- Variable routing 사용시 주의점!
+	- 1. 변수명과 views.py 함수 매개변수의 이름이 같아야한다!!
+	- 2. variable routing이 설정되면 반드시 매개변수로 받아야한다!!
+	- 3. variable routing이 적용된 주소는 반드시 값을 넣어야한다!!
+
+```python
+# urls.py
+from django.urls import path
+from . import views
+
+
+app_name = 'articles'
+urlpatterns = [
+    path('lotto/', views.lotto, name='lotto'),  # 해당 경로의 이름을 lotto라고 정의
+    path('index/',  views.index, name='index'),
+    path('hello/<name>/', views.hello, name='hello'),   # variable routing
+
+]
+```
+```python
+# views.py
+
+# Create your views here.
+from this import d
+from django.shortcuts import render
+import random
+
+def lotto(request):
+    lotto_numbers = random.sample(range(1,46), 6)
+    context = {
+        'lotto_numbers' : lotto_numbers,
+    }
+    return render(request, 'articles/lotto.html', context)
+
+def index(request):
+    return render(request, 'articles/index.html')
+
+
+def hello(request, name):
+    print(name)
+    context = {
+        'name':name,
+    }
+    return render(request, 'articles/hello.html', context)
+```
+```html
+# hello.html
+{% extends 'base.html' %}
+{% block content %}
+
+<p>Variable Routing 예제</p>
+<h2>안녕하세요!! {{ name }}!!</h2>
+
+{% endblock content %}
+```
+```python
+# age 인자 추가로 받기 가능!!
+# urls.py
+from django.urls import path
+from . import views
+
+
+app_name = 'articles'
+urlpatterns = [
+    path('lotto/', views.lotto, name='lotto'),  # 해당 경로의 이름을 lotto라고 정의
+    path('index/',  views.index, name='index'),
+    path('hello/<name>/<age>/', views.hello, name='hello'),   # variable routing
+
+]
+```
+```python
+# views.py
+
+from this import d
+from django.shortcuts import render
+import random
+
+
+# Create your views here.
+def lotto(request):
+    lotto_numbers = random.sample(range(1,46), 6)
+    context = {
+        'lotto_numbers' : lotto_numbers,
+    }
+    return render(request, 'articles/lotto.html', context)
+
+def index(request):
+    return render(request, 'articles/index.html')
+
+
+def hello(request, name, age):
+    print(type(name), type(age))    # 디버깅용
+    context = {
+        'name':name,
+        'age':age,
+    }
+    return render(request, 'articles/hello.html', context)
+```
+```html
+# hello.html
+
+{% extends 'base.html' %}
+{% block content %}
+
+<p>Variable Routing 예제</p>
+<h2>안녕하세요!! {{ name }} ({{ age }})!!</h2>
+
+{% endblock content %}
+```
+---
+
+## APP URL Mapping
+<img src="./django01_img/url_map.png">
