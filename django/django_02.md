@@ -284,7 +284,7 @@
 
 > <mark>QuerySet</mark>
 - DB 데이터를 담고있는 유사리스트!!!
-- But, [-1] 등의 음수 인덱스는 사용 불가 !
+- But, [-1] 등의 **음수 인덱스는 사용 불가 !**
 - 데이터베이스에게서 전달받은 객체 목록(데이터 모음)
   - 순회 가능 데이터로써 1개이상의 데이터를 불러와 사용할 수 있음
 - Django ORM을 통해 만들어진 자료형이며, **필터**를 걸거나 **정렬**등을 수행할 수 있음
@@ -303,7 +303,7 @@
 
 > CREATE
 - 데이터 객체를 만드는 3가지 방법
-- 1. 첫번째 방법
+- 1. **첫번째 방법**
   - article = Article()
     - 클래스를 통한 인스턴스 생성
   - article.title
@@ -344,6 +344,7 @@
 - <mark>filter()</mark>
   - 지정된 조회 매개 변수와 일치하는 객체를 포함하는 새 QuerySet을 반환
   - 없어도 오류가 안남
+  - 조회된 객체가 없거나 1개여도 QuerySet을 반환
   - <img src="./django02_img/read03.png">
 - <mark>Field lookups</mark>
   - 특정 레코드에 대한 조건을 설정하는 방법
@@ -374,29 +375,10 @@
   - <img src="./django02_img/delete03.png">
 
 
-### HTTP method GET 재검토
-- /articles/create/?title=11&content=22 와같은 url로 요청이 보내짐
-- <mark>GET</mark>
-  - 특정 리소스를 가져오도록 요청할 때 사용
-  - 반드시 데이터를 가져올때만 사용해야함
-  - DB에 변화를 주지않음
-    - **DB에 변화를 주는 CREATE, UPDATE, DELETE에서는 사용하지않기**로 약속!!
-    - **대신 POST를 사용!**
-  - CRUD에서 READ를 담당
-  - 길이제한이 있음
-
-- <mark>POST</mark>
-  - 서버로 데이터 전송
-  - 서버에 변경사항 만듦
-  - 데이터를 HTTP body에 담아 전송
-  - GET의 쿼리스트링 파라미터와 다르게 URL로 데이터를 보내지 않음
-  - CUD 역할
-
-
 
 ## CRUD with view functions
 
-### base.html 작성
+### <mark>base.html 작성</mark>
 ```html
 <!-- templates/base.html -->
 <!DOCTYPE html>
@@ -428,11 +410,11 @@
         ...,
         'DIRS': [BASE_DIR / 'templates',],
         ...
-    }
+    }ㅌ
 ]
 ```
 
-### url 분리 및 연결
+### <mark>url 분리 및 연결</mark>
 ```python
 # articles/urls.py
 
@@ -454,7 +436,7 @@ urlpatterns = [
 ]
 ```
 
-### index 페이지 작성
+### <mark>index 페이지 작성</mark>
 
 ```python
 # articles/urls.py
@@ -475,7 +457,6 @@ def index(request):
 
 ```
 ```html
-
 # templates/articles/index.html
 
 {% extends 'base.html' %}
@@ -494,14 +475,225 @@ def index(request):
 from .models import Article
 
 def index(request):
-    articles = Article.objects.all()
+    # 모든 게시글의 데이터가 필요
+    # 1. 모든 데이터를 확보
+    articles = Article.objects.all()  
+    # 2. 확보한 데이터를 template 에 보여줘야 한다.
+    # 확보한 데이터를 템플릿으로 전달할 필요가 있다.
     context = {
         'articles' : articles,
     }
     return render(request, 'articles/index.html', context)
 ```
 
----
+## CREATE
+- CREATE 로직 구현을 위해서는 몇개의 view 함수가 필요?
+  - "new" view function : 사용자의 입력을 받을 페이지를 렌더링하는 함수
+  - "create" view function : 사용자가 입력한 데이터를 전송받아 DB에 저장하는 함수
+
+### NEW
+
+```python
+# articles/urls.py
+app_name = 'articles'
+urlpatterns = [
+    path('index/', views.index, name='index'),
+
+    path('new/', views.new, name='new'),
+]
+
+
+# articles/views.py
+
+# 글 쓰기 버튼을 눌렀을 때 
+# 사용자 입력 페이지 (그쓰기 페이지) 응답으로 전달
+def new(request):
+    return render(request, 'articles/new.html')
+
+```
+
+```html
+<!--templates/articles/new.html-->
+
+{% extends 'base.html' %}
+{% block content %}
+<h1>글 작성하기</h1>
+{% comment %} 목적지는 우리가 만들면 된다! {% endcomment %}
+{% comment %} 이제 method 는 POST 를 사용하자!! 
+ => DB에 영향을 미치는 요청은 전부 POST 요청으로 하기로 했기 때문
+ => 글 생성하는 것도 DB에 데이터를 추가하는 것이다 
+ => DB를 변경하는 것과 같음
+{% endcomment %}
+{% comment %} 
+    POST 요청으로 변경할 때 바뀌는 부분
+    1. method
+    2. csrf_token 
+    3. views.py 에 request.POST 로 변경
+{% endcomment %}
+<form action="{% url 'articles:create' %}" method="POST">
+    {% csrf_token %}
+    <label for="title">글 제목</label>
+    <input type="text" id="title" name="title">
+    <br>
+    <label for="content">글 내용</label>
+    <textarea name="content" id="content" cols="30" rows="10"></textarea>
+    <br>
+    <button>글쓰기</button>
+</form>
+{% endblock content %}
+
+```
+```html
+<!--templates/articles/index.html-->
+<!-- new 페이지로 이동할 수 있는 하이퍼 링크 작성-->
+
+{% extends 'base.html' %}
+{% block content %}
+<h1>INDEX</h1>
+{% comment %} 1 번째 링크 작성 방법 : 온전히 모든 URL을 작성 {% endcomment %}
+{% comment %} <a href="http://127.0.0.1:8000/articles/">Lotto PAGE 가기</a> {% endcomment %}
+
+{% comment %} 2 번째 링크 작성 방법 : path만 작성 {% endcomment %}
+{% comment %} <a href="/articles/">Lotto page 이동 2</a> {% endcomment %}
+
+{% comment %} 3 번째 링크 작성 방법 : DTL url Tag 사용 {% endcomment %}
+{% comment %} <a href="{% url 'articles:lotto' %}">Lotto page 이동 3</a> {% endcomment %}
+
+{% comment %} 글 작성을 위한 링크 추가 {% endcomment %}
+<a href="{% url 'articles:new' %}">글 쓰기</a>
+<hr>
+{% for post in posts %}
+<p>
+  {% comment %} 
+  variable routing으로 전달하는 값은 유일한 값이어야 함. 
+  => id 값이 제격이다!!!
+  {% url 'app_name:path_name' 주소로전달값 %}
+  ## 주의 한 칸 띄어적는다.
+  {% endcomment %}
+  <a href="{% url 'articles:detail' post.pk %}">{{ post.title }}</a>
+</p>
+{% endfor %}
+
+{% endblock content %}
+
+```
+### CREATE
+
+```python
+# articles/urls.py
+
+urlpatterns = [
+  ...
+  path('create/', views.create, name = 'create'),
+]
+
+# articles/views.py
+
+# 사용자가 작성한 데이터를 받아서 DB에 저장하는 역할
+def create(request):
+    # 데이터를 저장하기 위해서는 사용자의 데이터를 확보
+    # print(request.GET)
+    # GET 요청일 때 데이터를 받는 방법
+    # title = request.GET.get('title')
+    # content = request.GET.get('content')
+    
+    # POST 요청으로 바꿨을 때 수정되는 부분 3번째
+    # POST 요청일 때 데이터를 받는 방법
+    title = request.POST.get('title')
+    content = request.POST.get('content')
+    # 확보한 데이터를 DB에 저장
+
+    # 데이터를 DB에 저장하는 방법은 3가지가 존재
+    # 1 번 방법 (Post 클래스의 빈 인스턴스를 생성)
+    post = Post()
+    post.title = title
+    post.content = content
+    post.save()            # DB 저장
+
+    # 2 번 방법 (Post 클래스의 인스턴스를 생성 (클래스 변수를 같이 줘서))
+    # post = Post(title=title, content=content)
+    # post.save()    # DB 저장
+
+    # 3 번 방법 (Queryset API create 메서드를 이용한다.)
+    # 반환되는 인스턴스는 이미 DB에 저장된 데이터
+    # post = Post.objects.create(title=title, content=content)
+
+    # 글 작성을 완료하고 나면 다음 뜨는 페이지
+    # 선택 1.  index 페이지로 이동해서 전체 데이터 목록을 보자!
+    # return redirect('articles:index')
+    # 선택 2. 방금 작성한 글 페이지로 이동하는 방법
+    return redirect('articles:detail', post.pk)
+```
+--> 게시글 작성 후 index 페이지로 돌아가게 하기위해 **return render(request, 'articles/index.html')** 할 경우,
+- 게시글 조회 x (create 함수에서 index.html문서를 렌더링할때 context 데이터와 함께 렌더링 하지 않았기 때문)
+- 게시글 작성 후 url은 여전히 create에 머물러있음 (index view 함수를 통해 반환 값이 아닌 단순히 index 페이지만 render 되었을 뿐!)
+
+### Django shortcut function - <mark>"redirect()"</mark>
+- 인자에 작성된 곳으로 요청을 보냄
+- 사용 가능 인자
+  - 1. view name (URL pattern name)
+    - return redirect('articles:index')
+  - 2. absolute or relative URL
+    - return redirect('/articles/')
+- 동작 원리
+  - 1) 클라이언트가 create url로 요청을 보냄
+  - 2) create view 함수의 redirect 함수가 302 status code를 응답
+  - 3) 응답받은 브라우저는 redirect 인자에 담긴 주소로 (index) 사용자를 이동시키기 위해 index url로 Django에 재요청
+  - 4) index page를 정상적으로 응답받음 (200 status code)
+
+### 302 Found
+- HTTP response status code 중 하나
+- 해당 상태 코드를 응답받으면 브라우저는 사용자를 해당 URL의 페이지로 이동시킴
+
+### HTTP response status code
+- 클라이언트에게 특정 HTTP 요청이 성공적으로 완료되었는지 여부를 알려줌
+- 응답은 5개의 그룹으로 나뉘어짐
+  - 1. Informational responses (1xx)
+  - 2. Successful responses (2xx)
+  - 3. Redirection messages (3xx)
+  - 4. Client error responses (4xx)
+  - 5. Server error responses (5xx)
+
+
+
+### HTTP method GET 재검토
+- HTTP request method
+  - HTTP는 request method를 정의하여, 주어진 리소스에 수행하길 원하는 행동을 나타냄
+- /articles/create/?title=11&content=22 와같은 url로 요청이 보내짐
+- <mark>GET</mark>
+  - 특정 리소스를 가져오도록 요청할 때 사용
+  - 반드시 데이터를 가져올때만 사용해야함
+  - DB에 변화를 주지않음
+    - **DB에 변화를 주는 CREATE, UPDATE, DELETE에서는 사용하지않기**로 약속!!
+    - **대신 POST를 사용!**
+  - CRUD에서 READ를 담당
+  - 길이제한이 있음
+
+- <mark>POST</mark>
+  - 서버로 데이터 전송
+  - 서버에 변경사항 만듦
+  - 데이터를 HTTP body에 담아 전송
+  - GET의 쿼리스트링 파라미터와 다르게 URL로 데이터를 보내지 않음
+  - CUD 역할
+
+### 403 Forbidden
+- 서버에 요청이 전달되었으나 권한때문에 거절
+  
+### CSRF Token
+- **{% crsf_token %}**
+- 사용자의 데이터에 임의의 난수값(token)을 부여해 매 요청마다 해당 난수값을 포함시켜 전송
+- 이후 서버에서 요청을 받을때마다 전달된 token이 유효한지 검증
+- POST, PATCH, DELETE
+- 템플릿에서 내부 url로 향하는 POST form을 사용하는 경우에 사용
+  - 외부 url로 향하는 POST form에 대해선 csrf토큰이 유출되어 취약성 유발
+
+
+
+## READ 2 (detail page)
+
+- 개별 게시글 상세 페이지
+- 글의 번호 (pk)를 활용하여 하나의 뷰 함수와 템플릿 파일로 대응
+- **Variable Routing**  
 
 # ***Model 기본 진행 방법
 
