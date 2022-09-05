@@ -695,6 +695,233 @@ def create(request):
 - 글의 번호 (pk)를 활용하여 하나의 뷰 함수와 템플릿 파일로 대응
 - **Variable Routing**  
 
+```python
+# articles/urls.py
+
+urlpatterns = [
+    ...
+     # 글 조회를 위한 detail page
+    path('detail/<post_id>/', views.detail, name='detail'),
+]
+
+
+
+# articles/views.py
+
+# 글 내용 조회 (하나의 글 데이터 필요)
+def detail(request, post_id):
+    # Post.objects.get(컬럼명=찾는값)
+    # 사용자가 무슨 글을 클릭했지?????
+    # => 사용자가 클릭한 글 정보를 전달받아야 하는데 어떻게??
+    # => 주소로 글의 정보를 전달받자! variable routing 사용하자
+    # => 글을 클릭 할 때 전달해야 한다! (index page 에서 글을 클릭하죠?)
+    # => query api 에서 get 메소드는 유일한 값을 이용해서 데이터를 찾음
+    # => 글을 클릭하는 index.html 에서 id 를 주소에 넘겨준다.
+    # => 그 넘겨준 주소를 변수로 사용해야 하기 때문에 urls.py 에서 변수 설정을 해준다. (/<post_id>/)
+    # => urls.py 로 부터 넘어오는 변수를 첫 번째 인자로 받아준다. (이름은 반드시 동일)
+    # => 그 값이 post_id <- 사용자가 클릭한 글의 아이디
+
+    # post_id는 variable routing을 통해 받은 것
+    # id는 DB에 저장된 레코드의 id컬럼
+    post = Post.objects.get(id=post_id)  # 전달 받은 아이디로 데이터를 가져온다. (데이터 확보)
+    context = {
+        'post': post,
+    }
+    return render(request, 'articles/detail.html', context)
+
+```
+
+```html
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ post.id }}번 글</h1>
+<p>제목 {{ post.title }}</p>
+<p>내용 {{ post.content }}</p>
+<hr>
+{% comment %} pk == id {% endcomment %}
+<a href="{% url 'articles:edit' post.id %}">수정하기</a>
+<a href="{% url 'articles:index' %}">글 목록보기</a>
+<hr>
+{% comment %} <a href="{% url 'articles:delete' post.id %}">글 삭제하기</a> {% endcomment %}
+<form action="{% url 'articles:delete' post.id %}" method="POST">
+  {% csrf_token %}
+  <button>삭제하기</button>
+</form>
+{% endblock content %}
+```
+
+```python
+# redirect 인자 변경
+
+def create(request):
+    ...
+    return redirect('articles:detail', post.pk)
+```
+  
+## DELETE
+- 삭제하고자 하는 특정 글을 조회 후 삭제해야함 
+```python
+# articles/urls.py
+urlpatterns = [
+    ...
+    path('delete/<post_id>/', views.delete, name='delete'),
+]
+
+# articles/views.py
+
+def delete(request, post_id):
+    # POST 요청일 때만 삭제하게 만들어 줘야 한다.
+    if request.method == 'POST':
+        # 삭제해주면 끝!
+        # 1. 삭제할 데이터를 가져온다.
+        post = Post.objects.get(pk=post_id)
+        # 2. 삭제한다.
+        post.delete()
+    return redirect('articles:index')
+```
+
+```html
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ post.id }}번 글</h1>
+<p>제목 {{ post.title }}</p>
+<p>내용 {{ post.content }}</p>
+<hr>
+{% comment %} pk == id {% endcomment %}
+<a href="{% url 'articles:edit' post.id %}">수정하기</a>
+<a href="{% url 'articles:index' %}">글 목록보기</a>
+<hr>
+{% comment %} <a href="{% url 'articles:delete' post.id %}">글 삭제하기</a> {% endcomment %}
+
+<!-- DB에 영향을 미치기 때문에 POST method 사용 !-->
+
+<form action="{% url 'articles:delete' post.id %}" method="POST">
+  {% csrf_token %}
+  <button>삭제하기</button>
+</form>
+{% endblock content %}
+
+```
+
+## UPDATE
+
+- 수정은 CREATE로직과 마찬가지로 2개의 view 함수가 필요
+- 사용자의 입력을 받을 페이지를 렌더링 하는 함수 1개
+  - "edit" view function
+- 사용자가 입력한 데이터를 전송 받아 DB에 저장하는 함수 1개
+  - "update" view function
+
+```python
+# articles/urls.py
+
+urlpatterns = [
+    ...
+    path('edit/<post_id>/', views.edit, name='edit'),
+
+]
+
+
+# articles/views.py
+
+
+def edit(request, post_id):
+    # 어떤 글을 수정하고 있는지 post_id 로 확인 가능
+    post = Post.objects.get(pk=post_id)
+    context = {
+        'post': post,
+    }
+    return render(request, 'articles/edit.html', context)
+```
+
+```html
+<!-- articles/detail.html-->
+
+<!-- html태그의 value속성을 사용해 기존에 입력되어있던 데이터를 출력-->
+
+{% extends 'base.html' %}
+{% block content %}
+<h1>글 수정하기</h1>
+{% comment %} 목적지는 우리가 만들면 된다! {% endcomment %}
+<form action="{% url 'articles:update' post.pk %}" method="POST">
+    {% csrf_token %}
+    <label for="title">글 제목</label>
+    <input type="text" id="title" name="title" value="{{ post.title }}">
+    <br>
+    <label for="content">글 내용</label>
+    <textarea name="content" id="content" cols="30" rows="10">{{ post.content }}</textarea>
+    <br>
+    <button>글수정</button>
+</form>
+{% endblock content %}
+```
+
+```python
+# articles/urls.py
+
+urlpatterns = [
+
+    ...
+    path('update/<post_id>/', views.update, name='update'),
+]
+
+
+# articles/views.py 
+
+def update(request, post_id):
+    # 1. 수정할 글 데이터를 찾아온다.
+    post = Post.objects.get(pk=post_id)
+    # 2. 수정한다.
+    # post.title = request.GET.get('title')
+    # post.content = request.GET.get('content')
+    post.title = request.POST.get('title')
+    post.content = request.POST.get('content')
+    # 3. 저장한다.
+    post.save()
+
+    # 글 수정 완료 되었으니 글 디테일 페이지로 가서 글을 확인할 수 있으면 베스트
+    return redirect('articles:detail', post.pk)
+```
+
+```html
+<!--articles/edit.html-->
+
+{% extends 'base.html' %}
+{% block content %}
+<h1>글 수정하기</h1>
+{% comment %} 목적지는 우리가 만들면 된다! {% endcomment %}
+<form action="{% url 'articles:update' post.pk %}" method="POST">
+    {% csrf_token %}
+    <label for="title">글 제목</label>
+    <input type="text" id="title" name="title" value="{{ post.title }}">
+    <br>
+    <label for="content">글 내용</label>
+    <textarea name="content" id="content" cols="30" rows="10">{{ post.content }}</textarea>
+    <br>
+    <button>글수정</button>
+</form>
+{% endblock content %}
+```
+---
+
+## Admin site
+- "관리자 페이지"
+- 사용자가 아닌 서버의 관리자가 활용하기 위한 페이지
+- 모델 class를 admin.py에 등록하고 관리
+- 레코드 생성 여부 확인에 매우 유용하며 직접 레코드를 삽입할 수도 있음
+- $ python manage.py createsuperuser
+- username과 password를 입력해 관리자계정을 생성
+- 모델의 record를 보기 위해서는 admin.py에 등록 필요
+  - ```python
+    # articles/admin.py
+
+    from django.contrib import admin
+    from .models import Article
+
+    admin.site.register(Article)
+    ```
+
+
+
 # ***Model 기본 진행 방법
 
 1. `[models.py](http://models.py)` 에 클래스를 정의한다.
