@@ -29,6 +29,21 @@
   ```
 
 ### From rendering options
+```html
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+
+{% block content %}
+  <h1>CREATE</h1>
+  <form action="{% url 'articles:create' %}" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit">
+  </form>
+  <hr>
+  <a href="{% url 'articles:index' %}">뒤로가기</a>
+```
+
 - \<label> & \<input> 쌍에 대한 3가지 출력 옵션
 - 1. **as_p()**
     - 각 필드가 단락 (\<p> 태그)으로 감싸져서 렌더링
