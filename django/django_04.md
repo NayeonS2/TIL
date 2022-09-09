@@ -763,7 +763,7 @@ def change_password(request):
 
 ---
 
-## Limiting access to logged-in users
+## Limiting access to logged-in users*
 - 로그인 사용자에 대한 접근 제한하기
 - 로그인 사용자에 대해 접근을 제한하는 2가지 방법
   - 1. The raw way
