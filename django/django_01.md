@@ -596,7 +596,7 @@ def dinner(request):
 - 변수는 <>에 정의, view함수 인자로 할당
 - 기본타입은 str
 - 5가지 타입으로 명시 가능
-- ex) path('hello/\<name>/\<int:age>/', views.hello, name='hello'), 
+- ex) path('hello/\<name>/\<int:age>/\', views.hello, name='hello'), 
 - query string parameter -> 사용자의 입력 필요
 - variable routing -> 주소이동할때 path의 일부분을 변수로 사용/ 사용자입력 x
 - path('hello/\<name>/', views.hello)
@@ -715,3 +715,260 @@ def hello(request, name, age):
 
 ## APP URL Mapping
 <img src="./django01_img/url_map.png">
+
+
+
+### 추가 템플릿 경로 추가
+
+- base.html의 위치를 앱 안의 template 디렉토리가 아닌 프로젝트 최상단의 templates 디렉토리에 안에 위치시키기
+
+```python
+# settings.py
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+```
+
+- **BASE_DIR**
+  
+  ```python
+  # settings.py
+  
+  BASE_DIR = path(__file__}.resolve().parent.parent
+  ```
+  
+  - settings.py에서 특정 경로를 절대 경로로 편하게 작성할 수 있도록 Django에서 미리 지정해둔 경로 값
+  - ‘객체 지향 파일 시스템 경로’
+  - 운영체제 별로 파일 경로 표기법이 다르기 때문에 어떤 운영체제에서 실행되더라도 각 운영체제 표기법에 맞기 해석될 수 있도록 하기 위해 사용
+
+# 6. Sending and Retrieving form data
+
+## Sending and Retrieving form data
+
+- ‘데이터를 보내고 가져오기'
+
+## 1. sending form data(client)
+
+### HTML < form > element
+
+- 데이터가 전송되는 방법을 정의
+- 웹에서 사용자 정보를 입력하는 여러 방식(text, button, submit 등)을 제공하고, **사용자로부터 할당된 데이터를 서버로 전송하는역할을 담당**
+- 핵심속성
+  1. action
+  2. method
+
+### HTML form’s attributes
+
+1. action
+   - 입력 데이터가 전송될 url을 지정
+   - 데이터를 어디로 보낼 것인지 지정하는 것이며, 이 값은 반드시 유효한 url이어야 함
+   - 만약 이 속성을 지정하지 않으면 데이터는 현재 form이 있는 페이지의 url로 보내짐
+2. method
+   - 데이터를 어떻게 보낼 것인지 정의
+   - 입력 데이터의 HTTP request methods를 지정
+   - HTML form 데이터 전송방식
+     1. GET
+     2. POST
+
+### HTML \<form> element 작성
+
+```python
+# urls.py
+
+urlpatterns = [
+    ...,
+    path('throw/', views/throw),
+]
+```
+
+```python
+# articles/views.py
+
+def throw(request):
+    return render(request, 'throw.html')
+```
+
+```html
+<!-- articles/templates/throw.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Throw</h1>
+    <form action="#" method = "#">
+
+    </form>
+{% endblock content %}
+```
+
+- 사용자로부터 데이터를 입력받기 위해 사용
+- ‘type’ 속성에 따라 동작 방식이 달라진다.
+- input요소의 동작방식은 type 특성에 따라 현격히 달라지므로 각각의 type은 별도로 MDN문서에서 참고하여 사용하도록 함
+- default : ‘text’
+- 핵심 속성
+  - name
+
+### HTML input’s attribute
+
+- name
+  - GET/POST 방식으로 서버에 전달하는 파라미터(name-key : value-value)로 매핑하는 것
+  - form을 통해 데이터를 제출할 때 name 속성에 설정된 값을 서버로 전송
+  - 서버는 name속성에 설정된 값을 통해 사용자가 입력한 데이터 값에 접근
+  - GET방식에서 데이터 전달형식
+    - `'?key=value&key=value/'`
+
+### HTML \<input> element 작성
+
+```html
+<!-- articles/templates/throw.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Throw</h1>
+    <form action="/catch/" method = "GET"> # action을 통해 입력받은 데이터 서버로 전송
+        <label for="message">Throw</label>
+        <input type="text" id="message" name='message'>
+        <input type="submit">
+    </form>
+{% endblock content %}
+```
+
+### HTML request methods
+
+- HTTP
+  - html문서와 같은 리소스(데이터, 자원)들을 가져올 수 있도록 해주는 프로토콜(규칙, 규약)
+- 웹에서 이루어지는 모든 데이터 교환의 기초
+- HTTP는 주어진 리소스가 수행할 원하는 작업을 나타내는 request methods를 정의
+- 자원에 대한 행위(수행하고자 하는 동작)을 정의
+- 주어진 리소스에 수행하길 원하는 행동을나타냄
+- HTTP Method
+  - GET, POST, PUT, DELETE
+
+### GET
+
+- 서버로부터 정보를 조회하는데 사용 : 서버에 리소스를 요청하기 위해 사용
+- 데이터를 가져올 때만 사용해야 함
+- 데이터를 서버로 전송할 때 Query String Parameters를 통해 전송
+  - 데이터는 URL에 포함되어 서버로 보내짐
+
+### GET 메서드 작성
+
+- GET과 get 모두 대소문자 관계없이 동일하게 동작하지만, 명시적 표현을 위해 대문자 사용 권장
+
+### Query String parameters(Query String)
+
+- 사용자가 입력 데이터를 전달하는 방법 중 하나
+- url 주소에 데이터를 파라미터를 통해 넘기는 것
+- 앰퍼센트(&)로 연결된 key=value쌍으로 구성
+- 기본url과 물음표(?)로 구분하며, 물음표로 Q.S 시작을 알림
+  - 예시 : `http://host:port/path?key=value&key=value`
+
+---
+
+## 2. Retrieving the data(server)
+
+- 데이터 가져오기(검색하기)
+- key-value 쌍의 목록과 같은 데이터를 수신
+
+### catch 작성
+
+```python
+# url.py
+urlpatterns = [
+    ...
+    path('catch/', views.catch),
+]
+```
+
+```python
+# articles/views.py
+
+def catch(request):
+  pass
+  return render(request, 'name.html')
+```
+
+```html
+<!-- articles/templates/catch.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Catch</h1>
+    <h2>여기서 데이터를 받았어</h2>
+    <a href="/throw/">다시 던지러</a>
+{% endblock content %}
+```
+
+### 데이터 가져오기
+
+- catch page url : `http://127.0.0.1:8000/catch/?message=데이터`
+
+- GET method로 보내고 있기 때문에 데이터를 서버로 전송할 때 **Query String Parameters를 통해 전송**
+
+- 즉, 데이터는 url에 포함되어 서버로 보내짐
+
+- 모든 요청 데이터는 view함수의 첫번째 인자 request에 담겨 있음
+  
+  ```python
+  # views.py
+  from django.shortcuts import render
+  
+  def catch(request):
+      # print(request.GET) # <QueryDict: {'message': ['데이터']}>
+      # print(request.GET.get('message')) # '데이터'
+      # raise # 에러 강제시켜서 페이지 하단 확인
+  
+      message = request.GET.get('message')
+      context = {
+          'message' : message
+      }
+  
+      return render(request, 'catch.html', context)
+  ```
+  
+  ```html
+  <!-- articles/templates/catch.html -->
+  {% extends 'base.html' %}
+  
+  {% block content %}
+      <h1>Catch</h1>
+      <h2>여기서 {{message}}를 받았어</h2>
+      <a href="/throw/" class="href">다시 던지러</a>
+  {% endblock content %}
+  ```
+
+### request and response objects
+
+- 요청과 응답 객체 흐름
+  1. 페이지가 요청되면 Django는 요청에 대한 메타 데이터를 포함하는 HttpRequest object를 생성
+  2. 해당하는 적절한 view함수를 로드하고 httpRequest를 첫번째 인자로 전달
+  3. view 함수는 HttpResponse object를 반환
+
+### 참조
+
+- **trailing url slashes**
+  
+  - Django는 url 끝에 /가 없다면 자동으로 붙여주는 것이 기본 설정
+    - 모든 주소가 /로 끝나도록 구성 되어있음
+  - 문제 : [foo.com/bar와](http://foo.com/bar와) [foo.com/bar/](http://foo.com/bar/를)는 서로 다른 url이다.
+    - 이를 위해 Django에서는 **url 정규화**로 해결
+
+- **url 정규화**
+  
+  - 정규 url을 명시하는 것
+  - 복수의 페이지에서 같은 콘텐츠가 존재하는 것을 방지하기 위함
+  - Django에서 trailing slash가 없는 요청에 대해 자동으로 slash를 추가하여 통합된 하나의 콘텐츠를 볼 수 있도록 함.
