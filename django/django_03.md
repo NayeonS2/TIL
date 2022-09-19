@@ -28,7 +28,7 @@
         content = forms.CharField   # form에선 TextField가 존재 x
   ```
 
-### From rendering options
+### Form rendering options
 ```html
 {% extends 'base.html' %}
 {% load bootstrap5 %}
@@ -332,7 +332,7 @@ def create(request):
     context = {
         'form' : form,  # 두가지 경우의 form이 가능
     }
-    return render(request,'articles/new.html', context)
+    return render(request,'articles/create.html', context)
 ```
 - 이제는 불필요해진 new의 view함수와 url path를 삭제
 <img src="./django03_img/new_delete01.png">
