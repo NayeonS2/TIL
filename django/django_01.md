@@ -790,7 +790,7 @@ TEMPLATES = [
 
 urlpatterns = [
     ...,
-    path('throw/', views/throw),
+    path('throw/', views.throw),
 ]
 ```
 
