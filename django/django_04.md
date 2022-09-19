@@ -87,7 +87,7 @@ urlpatterns = [
 - ```python
   # settings.py
   # accounts => User 정의한 app 이름
-  AUTH_USER_MODE = 'accounts.User'  
+  AUTH_USER_MODEL = 'accounts.User'  
   ```
 - 3. admin.py에 커스텀 User 모델을 등록
 - 기본 User모델이 아니기 때문에 등록하지 않으면 admin site에 출력되지 않음
