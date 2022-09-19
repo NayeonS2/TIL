@@ -410,7 +410,7 @@
         ...,
         'DIRS': [BASE_DIR / 'templates',],
         ...
-    }ㅌ
+    }
 ]
 ```
 
@@ -436,55 +436,59 @@ urlpatterns = [
 ]
 ```
 
-### <mark>index 페이지 작성</mark>
+## - 1. READ 1(index page)
+
+### 모델 생성
 
 ```python
-# articles/urls.py
+from django.db import models
 
-from django.urls import path
-from . import views
+# Create your models here.
+class Post(models.Model):
+    # CharField : 글자제한으로 문자를 저장하기 위한 필드
+    # TextField : 글자 제한 없이 문자를 저장하기 위한 필드
+    title = models.CharField(max_length=225)
+    content = models.TextField()
 
-app_name = 'articles'
-urlpatterns = [
-    path('', views.index, name='index'),
-]
-
-
-# articles/views.py
-
-def index(request):
-    return render(request, 'articles/index.html')
-
-```
-```html
-# templates/articles/index.html
-
-{% extends 'base.html' %}
-
-{% block content %}
-    <h1>Articles</h1>
-{% endblock content %}
+    def __str__(self):
+        return self.title
 ```
 
-## READ 1 (index page)
-> 전체 게시글 조회
-- index 페이지에서는 전체 게시글을 조회해서 출력
+### 전체 게시글 조회
+
 ```python
+
 # articles/views.py
+from django.shortcuts import render, redirect
+from .models import Post
 
-from .models import Article
-
+# 모든 게시글의 목록을 보여주는 부분
 def index(request):
     # 모든 게시글의 데이터가 필요
     # 1. 모든 데이터를 확보
-    articles = Article.objects.all()  
-    # 2. 확보한 데이터를 template 에 보여줘야 한다.
-    # 확보한 데이터를 템플릿으로 전달할 필요가 있다.
+    posts = Post.objects.all()
+    # 2. 확보한 데이터를 template에 게시(, 즉 전달해야 한다.)
     context = {
-        'articles' : articles,
+        'posts':posts
     }
+
     return render(request, 'articles/index.html', context)
 ```
+
+```html
+<!-- templates/articles/index.html -->
+{% extends 'base.html' %}
+{% block content %}
+<h1> Article </h1>
+<hr>
+  {% for article in articles %}
+    <p> 글 번호 : {{article.pk}}</p>
+    <p> 글 제목 : {{article.title}}</p>
+    <p> 글 내용 : {{article.content}}</p>
+  {% endfor %}
+{% endblock content %}
+```
+
 
 ## CREATE
 - CREATE 로직 구현을 위해서는 몇개의 view 함수가 필요?
