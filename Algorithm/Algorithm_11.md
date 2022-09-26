@@ -18,27 +18,62 @@
   - <img src="./algo_11_img.md/merge_sort01.png">
   - 병합 : 2개의 부분 집합을 정렬하면서 하나의 집합으로 병합
   - <img src="./algo_11_img.md/merge_sort02.png">
+```python
+# 쉽게 설명한 병합 정렬
+# 입력: 리스트 a
+# 출력: 정렬된 새 리스트
+
+def merge_sort(a):
+    n = len(a)
+    # 종료 조건: 정렬할 리스트의 자료 개수가 한 개 이하이면 정렬할 필요 없음
+    if n <= 1:
+        return a
+    # 그룹을 나누어 각각 병합 정렬을 호출하는 과정
+    mid = n // 2  # 중간을 기준으로 두 그룹으로 나눔
+    g1 = merge_sort(a[:mid]) # 재귀 호출로 첫 번째 그룹을 정렬
+    g2 = merge_sort(a[mid:]) # 재귀 호출로 두 번째 그룹을 정렬
+    # 두 그룹을 하나로 병합
+    result = []       # 두 그룹을 합쳐 만들 최종 결과
+    while g1 and g2:  # 두 그룹에 모두 자료가 남아 있는 동안 반복
+        if g1[0] < g2[0]: # 두 그룹의 맨 앞 자료 값을 비교
+            # g1의 값이 더 작으면 그 값을 빼내어 결과로 추가
+            result.append(g1.pop(0))
+        else:
+            # g2의 값이 더 작으면 그 값을 빼내어 결과로 추가
+            result.append(g2.pop(0))
+    # 아직 남아 있는 자료들을 결과에 추가
+    # g1과 g2 중 이미 빈 것은 while을 바로 지나감
+    while g1:
+        result.append(g1.pop(0))
+    while g2:
+        result.append(g2.pop(0))
+    return result
+
+d = [6, 8, 3, 9, 10, 1, 2, 4, 7, 5]
+print(merge_sort(d))
+```
+
 
 
 ### 퀵 정렬
 - 주어진 배열을 두 개로 분할하고, 각각을 정렬한다.
 - 병합 정렬은 그냥 두 부분으로 나누지만, 퀵 정렬은 분할할 때 기준 아이템 (pivot item)을 중심으로 이보다 작은 것은 왼편, 큰 것은 오른편에 위치
 - 각 부분 정렬이 끝난 후, 병합 정렬은 "병합"이란 후처리 작업이 필요하나, 퀵 정렬은 필요하지 않음
+- O(NlogN)
 - Hoare-Partition 알고리즘
   
-- <img src="./algo_11_img.md/quick01.png">
-- <img src="./algo_11_img.md/quick02.png">
-- <img src="./algo_11_img.md/quick03.png">
-- <img src="./algo_11_img.md/quick04.png">
-- <img src="./algo_11_img.md/quick05.png">
-- <img src="./algo_11_img.md/quick06.png">
+- <img src="./algo_11_img.md/real_quick01.png">
+- <img src="./algo_11_img.md/real_quick02.png">
+- <img src="./algo_11_img.md/real_quick03.png">
+- <img src="./algo_11_img.md/real_quick04.png">
+- <img src="./algo_11_img.md/real_quick05.png">
+- <img src="./algo_11_img.md/real_quick06.png">
 
-- Lomuto-Partition 알고리즘
-
-- <img src="./algo_11_img.md/quick01_2.png"> 
 
 ```python
-# 퀵 정렬 (Hoare-Partition)
+# 퀵 정렬 
+
+# 코드 1 (Hoare-Partition)
 def partition(l,r):
     pivot = A[l]
     i, j = l, r
@@ -62,9 +97,90 @@ A = [7,2,5,3,4,5]
 N = len(A)
 qsort(0, N-1)
 print(A)
+
+
+# 코드 2 (Hoare-Partition)
+array = [5,7,9,0,3,1,6,2,4,8]
+
+def quick_sort(array, start, end):
+    if start >= end:    # 원소가 1개인 경우 종료
+        return
+    pivot = start       # 피벗은 첫번째 원소
+    left = start + 1
+    right = end
+    while left <= right:
+        # 피벗보다 큰 데이터를 찾을 때까지 반복
+        while left <= end and array[left] <= array[pivot]:
+            left += 1
+        # 피벗보다 작은 데이터를 찾을 때까지 반복
+        while right > start and array[right] >= array[pivot]:
+            right -= 1
+        if left > right:    # 엇갈렸다면 작은 데이터와 피벗을 교체
+            array[right], array[pivot] = array[pivot], array[right]
+        else:   # 엇갈리지 않았다면 작은 데이터와 큰 데이터를 교체
+            array[left], array[right] = array[right], array[left]
+    # 분할 이후 왼쪽 부분과 오른쪽 부분에서 각각 정렬 수행
+    quick_sort(array, start, right-1)
+    quick_sort(array, right+1, end)
+
+quick_sort(array, 0, len(array)-1)
+print(array)
+
+
+# 코드 3 (Hoare-Partition)
+def quick_sort(array):
+    # 리스트가 하나 이하의 원소만을 담고있다면 종료
+    if len(array) <= 1:
+        return array
+
+    pivot = array[0]    # 피벗은 첫번째 원소
+    tail = array[1:]    # 피벗을 제외한 리스트
+
+    left_side = [x for x in tail if x <= pivot] # 분할된 왼쪽 부분
+    right_side = [x for x in tail if x > pivot] # 분할된 오른쪽 부분
+
+    # 분할 이후 왼쪽 부분과 오른쪽 부분에서 각각 정렬을 수행하고 전체 리스트를 반환
+    return quick_sort(left_side) + [pivot] + quick_sort(right_side)
+
+print(quick_sort(array))
 ```
 
+
+- Lomuto-Partition 알고리즘
+
+- <img src="./algo_11_img.md/lamuto01.png">
+- <img src="./algo_11_img.md/lamuto02.png">
+- <img src="./algo_11_img.md/lamuto03.png">
+- <img src="./algo_11_img.md/lamuto04.png">
+- <img src="./algo_11_img.md/lamuto05.png">
+
+```python
+def LomutoPartition(arr, l, r):
+      p = arr[r]
+
+      i = l - 1
+
+      for j in range(l, r):
+        if arr[j] < p:
+          i += 1
+          arr[i], arr[j] = arr[j], arr[i]
+
+      arr[i + 1], arr[r] = arr[r], arr[i + 1]
+      return i + 1
+
+  def qsort(arr, l, r):
+      if l < r:
+          s = LomutoPartition(arr, l, r)
+          qsort(arr, l, s - 1)
+          qsort(arr, s + 1, r)
+```
+
+
+
 ## 이진 검색 (Binary Search)
+
+<img src="./algo_11_img.md/bin_s01.png">
+
 - 자료의 가운데에 있는 항목의 키 값과 비교하여 다음 검색의 위치를 결정하고 검색을 계속 진행하는 방법
 - 목적 키를 찾을 때까지 이진 검색을 순환적으로 반복 수행함으로써 검색 범위를 반으로 줄여가면서 보다 빠르게 검색을 수행
 - 이진 검색을 하기 위해서는 자료가 정렬된 상태여야 함
@@ -73,6 +189,43 @@ print(A)
   - 2) 중앙 원소의 값과 찾고자 하는 목표 값을 비교
   - 3) 목표 값이 중앙 원소 값보다 작으면 자료의 왼쪽 반에 대해서 새로 검색, 크다면 오른쪽 반에 대해 새로 검색 수행
   - 4) 찾고자 하는 값을 찾을 때까지 1~3 과정 반복
+
+```python
+# 이진 검색
+def binary_search(target, data):
+    data.sort()
+    start = 0
+    end = len(data) - 1
+
+    while start <= end:
+        mid = (start + end) // 2
+
+        if data[mid] == target:
+            return mid # 함수를 끝내버린다.
+        elif data[mid] < target:
+            start = mid + 1
+        else:
+            end = mid -1
+
+    return None
+
+# 이진 검색 (재귀)
+def binary_search_recursion(target, start, end, data):
+    if start > end:
+        return None
+
+    mid = (start + end) // 2
+
+    if data[mid] == target:
+        return mid
+    elif data[mid] > target:
+        end = mid - 1
+    else:
+        start = mid + 1        
+
+    return binary_search_recursion(target, start, end, data)
+```
+
 
 ## 분할 정복의 활용
 - 병합 정렬은 외부 정렬의 기본이 되는 정렬 알고리즘
