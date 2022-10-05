@@ -1,4 +1,6 @@
 # 하나로
+# 총 환경 부담금을 최소로 지불하며, N개의 모든 섬을 연결할 수 있는 교통 시스템을 설계
+
 from itertools import combinations
 import sys
 sys.stdin = open('input.txt')
@@ -47,7 +49,7 @@ for tc in range(1,1+T):
         a, b = comb[0][0], comb[1][0]
 
         L = ((comb[0][1]-comb[1][1])**2+(comb[0][2]-comb[1][2])**2)
-        w = L * E
+        w = L * E   # 환경부담금 => 환경 부담 세율(E)과 각 해저터널 길이(L)의 제곱의 곱(E * L^2)만큼 지불
         edges.append((w,a,b))
 
     edges.sort()
