@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>DETAIL</h2>
+  <a href="{% url 'either:index' %}">뒤로가기</a>
+  <hr>
+
+  <div><h1>{{ either.title }}</h1></div>
+  <div class="d-flex justify-content-">
+    <div>{{ either.issue_a }}</div>
+    <div>{{ either.issue_b }}</div>
+
+  </div>
+  
+  <hr>
+  <h3>댓글 작성</h3>
+  <form action="{% url 'eithers:comments_create' either.pk %}" method="POST">
+    {% csrf_token %}
+    {{ comment_form }}
+    <input type="submit" value="작성">
+
+  </form>
+  
+  <hr>
+  
+  <h3>댓글 목록</h3>
+  
+  <ul>
+    {% for comment in comments %}
+      <li>
+        {% if comment.pick == 'BLUE' %}
+            <div class="bg-primary">
+                {{ comment.content }}
+            </div>
+        {% elif comment.pick == 'RED' %}
+            <div class="bg-danger">
+                {{ comment.content }}
+            </div>
+        
+        {% endif %}
+        
+        
+        
+      </li>
+    
+    {% endfor %}
+  </ul>
+ 
+{% endblock content %}

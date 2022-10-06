@@ -859,8 +859,108 @@ def comment_create(request, pk):
               {% csrf_token %}
               <input type="submit" value="DELETE">
             </form>
+```
+
+## DELETE
+
+### 댓글 삭제 시 작성자 확인
+- 이제 댓글에는 작성자 정보가 함께 들어있기 때문에 현재 삭제를 요청하려는 사람과 댓글을 작성한 사람을 비교하여 본인의 댓글만 삭제할 수 있도록 함
+```python
+# articles/views.py
+
+def comments_delete(request, article_pk, comment_pk):
+    comment = Comment.objects.get(pk=comment_pk)
+    if request.user == comment.user:
+        comment.delete()
+    return redirect('articles:detail', article_pk)
+```
+
+- 추가로 해당 댓글의 작성자가 아니라면, 삭제 버튼을 출력하지 않도록 함
+
+```html
+<!-- articles/detail.html-->
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+  ...
+  <h4>댓글 목록</h4>
+  ...
+  <ul>
+      {% for comment in comments %}
+        <li>
+            {{ comment.user }} - {{ comment.content }}
+            {% if request.user == comment.user %}
+                <form action="{% url 'articles:comments_delete' article.pk comment.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="submit" value="DELETE">
+                </form>
+            {% endif %}
+```
 
 
+## 인증된 사용자에 대한 접근 제한하기
+### 인증된 사용자인 경우만 댓글 작성 및 삭제하기
+```python
+# articles/views.py
+
+@require_POST
+def comments_create(request, pk):
+    if request.user.is_authenticated:
+        article = Article.objects.get(pk=pk)
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.article = article
+            comment.user = request.user
+            comment.save()
+        return redirect('articles:detail', article.pk)
+    return redirect('accounts:login')
+
+
+@require_POST
+def comments_delete(request, article_pk, comment_pk):
+    if request.user.is_authenticated:
+        comment = Comment.objects.get(pk=comment_pk)
+        if request.user == comment.user:
+            comment.delete()
+    return redirect('articles:detail', article_pk)
+```
+
+### 비인증 사용자는 CommentForm을 볼 수 없도록 하기
+```html
+<!-- articles/detail.html-->
+{% extends 'base.html' %}
+{% block content %}
+
+    ...
+<hr>
+    {% if request.user.is_authenticated %}
+        <form action="{% url 'articles:comments_create' article.pk %}" method="POST">
+            {% csrf_token %}
+            {{ comment_form }}
+            <input type="submit">
+        </form>
+    {% else %}
+        <a href="{% url 'accounts:login' %}">[댓글을 작성하려면 로그인하세요.]</a>
+    {% endif %}
+{% endblock content %}
+```
+
+---
+
+# SUMMARY
+## A many-to-one relationship
+- ### Foreign Key
+- ### Django Relationship fields
+- ### Related manager
+
+## N:1 모델 관계 설정
+### 1. Comment - Article
+### 2. Article - User
+- Referencing the User model
+### 3. Comment - User
 
 
 
