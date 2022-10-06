@@ -331,7 +331,7 @@ admin.site.register(Comment)
 ## Comment 구현
 
 ## CREATE
-- 사용자로부터 댓글 데이터를 입력 받기 위한 CommentFrom 작성
+### 사용자로부터 댓글 데이터를 입력 받기 위한 CommentFrom 작성
 ```python
 # articles/forms.py
 
@@ -343,7 +343,7 @@ class CommentForm(forms.ModelForm):
         fields = '__all__'
 ```
 
-- detail 페이지에서 CommentForm 출력 (view 함수)
+### detail 페이지에서 CommentForm 출력 (view 함수)
 ```python
 
 # articles/views.py
@@ -358,6 +358,507 @@ def detail(request, pk):
         'comment_form': comment_form,
     }
     return render(request, 'articles/detail.html', context)
+
+# 기존 ArticleForm 클래스의 인스턴스 명을 form으로 작성했기에 헷갈리지 않도록 comment_form
+```
+
+### detail 페이지에서 CommentForm 출력 (Template)
+```html
+<!-- articles/detail.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <a href="{% url 'articles:index' %}">back</a>
+  <hr>
+  <form action="#" method="POST">
+     {% csrf_token %}
+     {{ comment_form }}
+     <input type="submit">
+  </form>
+{% endblock content %}
+```  
+
+### detail페이지에 출력된 CommentForm
+- 실제로는 댓글 작성 시 어떤 게시글에 작성하는지 직접 게시글 번호를 선택하지 않음
+- 해당 게시글에 댓글을 작성하면 자연스럽게 댓글이 작성되어야함
+- Comment 클래스의 외래키 필드 article 또한 데이터 입력이 필요하기때문에 출력되고 있는 상황
+- But, 외래키 필드는 **사용자 입력이 아닌, view 함수 내에서 받아 별도로 처리되어 저장되어야함!!!**
+
+
+### 외래키 필드를 출력에서 제외
+```python
+# articles/forms.py
+
+class CommentForm(forms.ModelForm):
+
+  class Meta:
+    model = Comment
+    exclude = ('article',)
+```
+
+### 출력에서 제외된 외래키 데이터는 어디서 받아올까?
+- detail 페이지의 url을 보면 path('**<int:pk>**/', views.detail, name='detail')
+- url에 해당 게시글의 pk 값이 사용되고 있음
+- 댓글의 외래 키 데이터에 필요한 정보가 바로 게시글의 pk값
+- url을 통해 변수를 넘기는 **variable routing** 사용
+
+```python
+# articles/urls.py
+urlpatterns = [
+  ...,
+  path('<int:pk>/comments/', views.comments_create, name='comments_create'),
+]
+```
+
+```html
+<!-- articles/detail.html-->
+
+<form action="{% url 'articles:comments_create' article.pk %}" method="POST">
+  {% csrf_token %}
+  {{ comment_form }}
+  <input type="submit">
+</form>
+```
+```python
+# articles/views.py
+
+def comments_create(request,pk):
+  article = Article.objects.get(pk=pk)
+  comment_form = CommentForm(request.POST)  
+  if comment_form.is_valid(): # 유효성 검사
+    # article 객체 저장이 이루어질 타이밍을 번다!
+    comment = comment_form.save(commit=False) # 데베 저장은 잠시 미루고, 저장될 객체를 반환!!!
+    comment.article = article
+    comment.save()
+  return redirect('articles:detail', article.pk)
+```
+
+> The save() method
+- save(commit=False)
+- "Create, but don't save the new instance."
+- 아직 데베에 저장되지 않은 인스턴스를 반환
+- 저장 전에 객체에 대한 사용자 지정 처리를 수행할때 사용
+
+
+## READ
+### 작성한 댓글 목록 출력하기 
+### 특정 article에 있는 모든 댓글을 가져온 후 context에 추가
+```python
+# articles/views.py
+
+from .models import Article, Comment
+
+def detail(request, pk):
+  article = Article.objects.get(pk=pk)
+  comment_form = CommentForm()
+  comments = article.comment_set.all()
+  context = {
+    'article': article,
+    'comment_form': comment_form,
+    'comments': comments,
+  }
+  return render(request, 'articles/detail.html', context)
+```
+
+### detail 템플릿에서 댓글 목록 출력하기
+```html
+<!-- articles/detail.html-->
+{% extends 'base.html' %}
+{% block content %}
+
+  ...
+  <a href="{% url 'articles:index' %}">back</a>
+  <hr>
+  <h4>댓글 목록</h4>
+  <ul>
+      {% for comment in comments %}
+        <li>{{ comment.content }}</li>
+      {% endfor %}
+  </ul>
+  <hr>
+  ...
+{% endblock content %}
+```
+
+## DELETE
+### 댓글 삭제 구현하기 (url, view)
+
+```python
+# articles/urls.py
+
+urlpatterns = [
+  ...,
+  path('<int:article_pk>/comments/<int:comment_pk>/delete/', views.comments_delete, name='comments_delete'),
+]
+
+
+
+# articles/views.py
+
+def comment_delete(request, article_pk, comment_pk):
+  comment = Comment.objects.get(pk=comment_pk)
+  comment.delete()
+  return redirect('articles:detail', article_pk)
+```
+
+### 댓글 삭제 버튼을 각 댓글 옆에 출력
+```html
+<!-- articles/detail.html-->
+{% extends 'base.html' %}
+{% block content %}
+
+  ...
+  <a href="{% url 'articles:index' %}">back</a>
+  <hr>
+  <h4>댓글 목록</h4>
+  <ul>
+      {% for comment in comments %}
+        <li>
+          {{ comment.content }}
+          <form action="{% url 'articles:comments_delete' article.pk comment.pk %}" method="POST">
+            {% csrf_token %}
+            <input type="sumit" value="DELETE">
+          </form>
+        </li>
+      {% endfor %}
+  </ul>
+  <hr>
+  ...
+{% endblock content %}
+```
+
+## Comment 추가 사항
+- 댓글 개수 출력하기
+  - DTL filter - length 사용
+  - Queryset API - count() 사용
+- 댓글이 없는 경우 대체 컨텐츠 출력하기
+
+
+### DTL filter - **length** 사용
+```html
+{{ comments|length }}
+{{ article.comment_set.all|length }}
+```
+
+### Queryset API - **count()** 사용
+```html
+{{ comments.count }}
+{{ article.comment_set.count }}
+```
+
+```html
+<!-- articles/detail.html-->
+<h4>댓글 목록</h4>
+{% if comments %}
+  <p><b>{{ comments|length }}개의 댓글이 있습니다.</b></p>
+{% endif %}
+```
+
+### DTL **for empty** 활용
+```html
+<!-- articles/detail.html-->
+{% extends 'base.html' %}
+{% block content %}
+
+  ...
+  <a href="{% url 'articles:index' %}">back</a>
+  <hr>
+  <h4>댓글 목록</h4>
+  <ul>
+      {% for comment in comments %}
+        <li>
+          {{ comment.content }}
+          <form action="{% url 'articles:comments_delete' article.pk comment.pk %}" method="POST">
+            {% csrf_token %}
+            <input type="sumit" value="DELETE">
+          </form>
+        </li>
+      {% empty %}
+        <p>댓글이 없어요....</p>
+      {% endfor %}
+  </ul>
+  <hr>
+  ...
+{% endblock content %}
+```
+
+--- 
+
+## N:1 (Article - User)
+
+### 개요
+- Article(N) - User(1)
+- Article 모델과 User 모델 간 관계 설정
+- "0개 이상의 게시글은 1개의 회원에 의해 작성될 수 있음"
+
+## Referencing the User model
+## Django에서 User 모델을 참조하는 방법
+
+### 1. **settings.AUTH_USER_MODEL**
+- 반환 값: 'accounts.User' (문자열)
+- User 모델에 대한 외래 키 또는 M:N 관계 정의 시 사용
+- **models.py 의 모델 필드에서 User 모델 참조 시 사용**
+
+### 2. **get_user_model()**
+- 반환 값: User Object (객체)
+- 현재 활성화(active)된 User 모델 반환
+- 커스터마이징한 User모델이 있을 경우 Custom User 모델, 그렇지 않으면 User를 반환
+- **models.py 가 아닌 다른 모든 곳에서 유저 모델을 참조할 때 사용**
+
+## 모델 관계 설정
+```python
+# articles/models.py
+
+from django.conf import settings
+
+class Article(models.Model):
+  user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+  ...
+```
+
+## Migration 진행
+- 기존 존재하던 테이블에 새로운 컬럼 추가되는 상황이기에 migrations 파일이 곧바로 만들어지지 않고 일련의 과정이 필요
+```python
+$ python manage.py makemigrations
+```
+> 첫번째 화면
+- 기본적으로 모든 컬럼은 NOT NULL 제약조건이 있기에, 데이터가 없이는 새로 추가되는 외래 키 필드 user_id 가 생성 x
+- 그래서 기본값을 어떻게 작성할 것인지 선택해야함
+- 1을 입력하고 Enter 진행 (다음 화면에서 직접 기본값 입력)
+
+> 두번째 화면
+- article의 user_id에 어떤 데이터를 넣을것인지 직접 입력
+- 마찬가지로 1 입력하고 Enter 
+- 그러면 기존 작성된 게시글이 있다면 모두 1번 회원이 작성한 것으로 처리
+
+```python
+$ python manage.py migrate
+```
+
+## CREATE
+### 개요
+- 인증된 회원의 게시글 작성 구현하기
+- 작성하기 전 로그인을 먼저 진행한 상태로 진행 
+
+### ArticleForm
+- ArticleForm 출력을 확인해보면 create 템플릿에서 불필요한 필드(user)가 출력
+- 이전에 CommentForm에서 외래 키 필드 article이 출력되는 상황과 동일
+- user 필드에 작성해야하는 user객체는 view함수의 request 객체를 활용해야함!
+- ArticleForm 출력 필드 수정
+```python
+# articles/forms.py
+
+class ArticleForm(forms.ModelForm):
+  
+  class Meta:
+    model = Article
+    fields = ('title', 'content',)
+```
+
+> 외래 키 데이터 누락
+- 게시글 작성 시 NOT NULL constraint failed: articles_article.user_id 에러 발생
+- "NOT NULL 제약조건이 실패했다. articles_article 테이블의 user_id 컬럼에서"
+- 게시글 작성 시 외래 키에 저장되어야 할 작성자 정보가 누락되었기 때문
+- 게시글 작성 시 작성자 정보가 함께 저장될 수 있도록 save의 commit 옵션 활용
+
+```python
+# articles/views.py
+
+@login_required
+@require_http_method(['GET','POST'])
+def create(request):
+  if request.method == 'POST':
+    form = ArticleForm(request.POST)
+    if form.is_valid():
+      article = form.save(commit=False)
+      article.user = request.user
+      article.save()
+      return redirect('articles:detail', article.pk)
+```
+
+
+## DELETE
+### 게시글 작성 시 작성자 확인
+- 이제 게시글에는 작성자 정보가 함께 들어있기 때문에 현재 삭제를 요청하려는 사람과 게시글을 작성한 사람을 비교하여 본인의 게시글만 삭제
+
+```python
+# articles/views.py
+
+@require_POST
+def delete(request, pk):
+  article = Article.objects.get(pk=pk)
+  if request.user.is_authenticated:
+    if request.user == article.user:
+      article.delete()
+      return redirect('articles:index')
+  return redirect('articles:detail', article.pk)
+```
+
+## UPDATE
+### 게시글 수정 시 작성자 확인
+- 수정도 마찬가지로 수정을 요청하려는 사람과 게시글을 작성한 사람을 비교하여 본인의 게시글만 수정할 수 있도록 함
+```python
+# articles/views.py
+
+@login_required
+@require_http_methods(['GET','POST'])
+def update(request, pk):
+  article = Article.objects.get(pk=pk)
+  if request.user == article.user:
+    if request.method == 'POST':
+      form = ArticleForm(request.POST, instance=article)
+      if form.is_valid():
+        form.save()
+        return redirect('articles:detail', article.pk)
+    else:
+      form = ArticleForm(instance=article)
+  else:
+    return redirect('articles:index')
+```
+
+- 추가로 해당 게시글의 작성자가 아니라면, 수정/삭제 버튼 출력하지 않도록 함
+```html
+<!-- articles/detail.html-->
+{% extends 'base.html' %}
+{% block content %}
+
+  ...
+  {% if request.user == article.user %}
+    <a href="{% url 'articles:update' article.pk %}">UPDATE</a>
+    <form action="{% url 'articles:delelte' article.pk %}" method="POST">
+      {% csrf_token %}
+      <input type="submit" value="DELETE">
+    </form>
+  {% endif %}
+  ...
+{% endblock content %}
+```
+
+## READ
+### 게시글 작성자 출력
+- index 템플릿과 detail 템플릿에서 각 게시글의 작성자 출력
+```html
+<!-- articles/index.html-->
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+  ...
+  {% for article in articles %}
+    <p><b>작성자 : {{ article.user }}</b></p>
+    <p>글 번호 : {{ article.pk }}</p>
+    <p>글 제목 : {{ article.title }}</p>
+    <p>글 내용 : {{ article.content }}</p>
+    <a href="{% url 'articles:detail' article.pk %}">DETAIL</a>
+    <hr>
+  {% endfor %}
+{% endblock %}
+```
+
+---
+
+## N:1 (Comment - USER)
+### 개요
+- Comment(N) - User(1)
+- Comment 모델과 User 모델 간 관계 설정
+- "0개이상의 댓글은 1개의 회원에 의해 작성 될 수 있음"
+
+## 모델 관계 설정
+### Comment 모델에 User 모델을 참조하는 외래 키 작성
+```python
+# articles/models.py
+
+class Comment(models.Model):
+  article = models.ForeignKey(Article, on_delete=models.CASCADE)
+  user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+  ...
+```
+
+### Migration 진행
+- 이전에 User와 Article 모델 관계 설정과 마찬가지로 기존에 존재하던 테이블에 새로운 컬럼이 추가되어야 하는 상황이기에 migrations 파일이 곧바로 만들어지지않고 일련의 과정이 필요
+```python
+$ python manage.py makemigrations
+```
+
+> 첫번째 화면
+- 기본적으로 모든 컬럼은 NOT NULL 제약조건이 있기에, 데이터가 없이는 새로 추가되는 외래 키 필드 user_id 가 생성 x
+- 그래서 기본값을 어떻게 작성할 것인지 선택해야함
+- 1을 입력하고 Enter 진행 (다음 화면에서 직접 기본값 입력)
+
+> 두번째 화면
+- comment의 user_id에 어떤 데이터를 넣을것인지 직접 입력
+- 마찬가지로 1 입력하고 Enter 
+- 그러면 기존 작성된 댓글이 있다면 모두 1번 회원이 작성한 것으로 처리
+
+- migrations 파일 생성 후 migrate 진행
+```python
+$ python manage.py migrate
+```
+
+- comment 테이블 스키마 변경 및 확인
+
+
+## CREATE
+### 개요
+- 인증된 회원의 댓글 작성 구현하기
+- 작성하기 전 로그인을 먼저 진행한 상태로 진행
+
+### CommentForm
+- CommentForm 출력을 확인해보면 create 템플릿에서 불필요한 필드(user) 출력
+- user 필드에 작성해야하는 user 객체는 view 함수의 request 객체를 활용해야함
+- CommentForm의 출력 필드 수정
+```python
+# articles/forms.py
+
+class CommentForm(forms.ModelForm):
+
+  class Meta:
+    model = Comment
+    exclude = ('article', 'user',)
+```
+
+> 외래 키 데이터 누락
+- 댓글 작성 시 NOT NULL constraint failed: articles_comment.user_id 에러 발생
+- "NOT NULL 제약조건이 실패했다. articles_comment 테이블의 user_id 컬럼에서"
+- 댓글 작성 시 외래 키에 저장되어야 할 작성자 정보가 누락되었기 때문
+- 댓글 작성 시 작성자 정보가 함께 저장될 수 있도록 save의 commit 옵션 활용
+
+```python
+# articles/views.py
+
+def comment_create(request, pk):
+  article = Article.objects.get(pk=pk)
+  comment_form = CommentForm(request.POST)
+  if comment_form.is_valid():
+    comment = comment_form.save(commi=False)
+    comment.article = article
+    comment.user = request.user
+    comment.save()
+  return redirect('articles:detail', article.pk)
+```
+
+## READ
+### 댓글 작성자 출력
+- detail 템플릿에서 각 게시글의 작성자 출력
+```html
+<!-- articles/detail.html-->
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+  ...
+  <h4>댓글 목록</h4>
+  ...
+  <ul>
+      {% for comment in comments %}
+        <li>
+            {{ comment.user }} - {{ comment.content }}
+            <form action="{% url 'articles:comments_delete' article.pk comment.pk %}" method="POST">
+              {% csrf_token %}
+              <input type="submit" value="DELETE">
+            </form>
 
 
 
