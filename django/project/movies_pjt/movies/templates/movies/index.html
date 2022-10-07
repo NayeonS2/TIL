@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>INDEX</h1>
+  {% if request.user.is_authenticated %}
+    <a href="{% url 'movies:create' %}">CREATE</a>
+  {% endif %}
+  <hr>
+  <ul>
+  {% for movie in movies %}
+    <li>
+        {% if movie.genre == 'romance' %}
+            <div class="text-bg-danger p-3 mt-3">
+                <a href="{% url 'movies:detail' movie.pk %}" class="link-light">{{ movie.title }}</a>
+                <p>{{ movie.score }}</p>
+            </div>
+        {% elif movie.genre == 'comedy' %}
+            <div class="text-bg-warning p-3 mt-3">
+                <a href="{% url 'movies:detail' movie.pk %}" class="link-dark">{{ movie.title }}</a>
+                <p>{{ movie.score }}</p>
+            </div>
+        {% elif movie.genre == 'horror' %}
+            <div class="text-bg-primary p-3 mt-3">
+                <a href="{% url 'movies:detail' movie.pk %}" class="link-light">{{ movie.title }}</a>
+                <p>{{ movie.score }}</p>
+            </div>
+        {% endif %}
+
+    </li>
+
+
+  {% endfor %}
+</ul>
+{% endblock content %}
