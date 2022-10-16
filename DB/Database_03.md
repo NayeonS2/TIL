@@ -828,7 +828,7 @@ def follow(request, user_pk):
 
 ### fixtures 기본 경로
 - app_name/fixtures
-- Django는 설치된 모든 app의 디렉토리에서 fixtures 폴더 이후의 경로로 fixtures 파일을 찾는다.
+- Django는 설치된 모든 app의 디렉토리에서 fixtures 폴더 이후의 경로로 fixtures 파일을 찾는다
 
 ### fixtures 생성 및 로드
 - 생성 (추출)
