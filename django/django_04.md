@@ -260,8 +260,8 @@ def login(request):
         if form.is_valid():
             # 로그인
             # login 함수명과 겹치지 않도록 변경
-            # form.get_user는 인증된 사용자 정보 제공
-            auth_login(request, form.get_user)   
+            # form.get_user()는 인증된 사용자 정보 제공
+            auth_login(request, form.get_user())   
             return redirect('articles:index')
 
     else:
