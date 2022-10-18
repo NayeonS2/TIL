@@ -876,7 +876,7 @@ class ComentSerializer(serializers.ModelSerializer):
   class Meta:
     model = Comment
     fields = '__all__'
-    read_only_fields = ('articles',)
+    read_only_fields = ('article',)
 ```
 
 ### DELETE & PUT
@@ -928,7 +928,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     model = Article
     fields = '__all__'
 ```
-
+- pk 정보만 받게됨 (잘 쓰지 않음 그냥 기억만 해두기!)
 - models.py에서 **related_name**을 통해 이름 변경 가능
 - 역참조 시 생성되는 **comment_set**을 override 할 수 있음
 
@@ -958,9 +958,11 @@ class ArticleSerializer(serializers.ModelSerializer):
     model = Article
     fields = '__all__'
 ```
+- **댓글에 대한 전반적인 내용까지 보고싶을때 사용**
+- 주로 사용!!! (기억***)
 - 모델 관계 상으로 참조된 대상은 참조하는 대상의 표현에 포함되거나 중첩(nested)될 수 있음
 - 이러한 중첩된 관계는 serializers를 필드로 사용하여 표현할 수 있음
-- 두 클래스의 상/하 위치를 변경해야함
+- **두 클래스의 상/하 위치를 변경해야함**
 
 ### 2. 특정 게시글에 작성된 댓글의 개수 출력하기
 - 새로운 필드 추가 - Article Detail
