@@ -1,42 +1,46 @@
 # 전쟁 - 전투
 
-def dfs(i,j,type,cnt):
+import sys
 
-    visited[i][j] = 1
-
-    for di,dj in [[-1,0],[1,0],[0,-1],[0,1]]:
-        ni,nj = i+di, j+dj
-        if 0<=ni<M and 0<=nj<N and visited[ni][nj] == 0:
-            if arr[ni][nj] == type:
-                dfs(ni,nj,type,cnt+1)
+sys.stdin = open('input.txt')
 
 
-    return cnt
+def dfs(i, j, type):
+    global cnt
+
+    if i < 0 or i >= N or j < 0 or j >= M:
+        return False
+
+    if visited[i][j] == 0 and arr[i][j] == type:
+        visited[i][j] = 1
+        cnt += 1
+
+        dfs(i - 1, j, type)
+        dfs(i + 1, j, type)
+        dfs(i, j - 1, type)
+        dfs(i, j + 1, type)
+        return True
+    return False
 
 
-N,M = map(int,input().split())
+M, N = map(int, input().split())
 
-arr = [list(input()) for _ in range(M)]
-visited = [[0]*N for _ in range(M)]
-power_w = 0
-power_b = 0
+arr = [list(input()) for _ in range(N)]
 
-for i in range(M):
-    for j in range(N):
-        if arr[i][j] == 'W':
+visited = [[0] * M for _ in range(N)]
 
-            ans = dfs(i,j,'W',1)
-            power_w += ans**2
+cnt = 0
+res_w = 0
+res_b = 0
+for i in range(N):
+    for j in range(M):
+        if dfs(i, j, 'W'):
+            res_w += cnt ** 2
+            cnt = 0
+        elif dfs(i, j, 'B'):
+            res_b += cnt ** 2
+            cnt = 0
 
-
-for i in range(M):
-    for j in range(N):
-        if arr[i][j] == 'B':
-
-            ans = dfs(i, j, 'B',1)
-            power_b+=ans**2
-
-
-print(power_w,power_b)
+print(res_w, res_b)
 
 
