@@ -1,4 +1,5 @@
 //1. 반환값이 없음 (바로 출력!)
+// 안에서 반복만 돌고 말기 때문에 return 값 유무는 상관없음
 const colors = ['red', 'blue', 'green']
 
 const printClr = function (color) {

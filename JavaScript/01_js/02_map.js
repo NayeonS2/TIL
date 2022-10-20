@@ -1,6 +1,8 @@
 const numbers = [1,2,3,4,5]
 
 //1. forEach + return !!
+// return 값을 원소로 사용
+// return 값을 결과로 새로운 배열 생성
 const doubleEle = function (number) {
     return number * 2
 }

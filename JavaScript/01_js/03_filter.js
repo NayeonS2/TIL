@@ -5,6 +5,9 @@ const products = [
     { name: 'apple', type: 'fruit'},
 ]
 
+// return 값이 참인지 거짓인지 확인 -> true라면 원소로 사용!!! (false는 사용x)
+
+
 //1. True / False로 반환
 const fruitFilter = function (product) {
     return product.type === 'fruit'
