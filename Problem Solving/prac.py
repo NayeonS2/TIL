@@ -1,44 +1,39 @@
 import sys
-
 sys.stdin = open('input.txt')
+from collections import deque
+
+def find():
+    idx = []
+    for i in range(N):
+        for j in range(N):
+            if arr[i][j] != 0:
+                idx.append((arr[i][j],i,j,0))
+    return sorted(idx)
+
+def bfs():
+    q = deque(find())
+
+    while q:
+        type, i, j, cnt = q.popleft()
+
+        if cnt == S:
+            return
+        else:
+            for di,dj in [[-1,0],[1,0],[0,-1],[0,1]]:
+                ni,nj = i+di, j+dj
+                if 0<=ni<N and 0<=nj<N:
+                    if arr[ni][nj] == 0:
+                        arr[ni][nj] = type
+                        q.append((type,ni,nj,cnt+1))
 
 
-def dfs(i, j, type):
-    global cnt
+N,K = map(int,input().split())
 
-    if i < 0 or i >= N or j < 0 or j >= M:
-        return False
+arr = [list(map(int,input().split())) for _ in range(N)]
 
-    if visited[i][j] == 0 and arr[i][j] == type:
-        visited[i][j] = 1
-        cnt += 1
+S,X,Y = map(int,input().split())
 
-        dfs(i - 1, j, type)
-        dfs(i + 1, j, type)
-        dfs(i, j - 1, type)
-        dfs(i, j + 1, type)
-        return True
-    return False
+bfs()
 
-
-M, N = map(int, input().split())
-
-arr = [list(input()) for _ in range(N)]
-
-visited = [[0] * M for _ in range(N)]
-
-cnt = 0
-res_w = 0
-res_b = 0
-for i in range(N):
-    for j in range(M):
-        if dfs(i, j, 'W'):
-            res_w += cnt ** 2
-            cnt = 0
-        elif dfs(i, j,'B'):
-            res_b += cnt ** 2
-            cnt = 0
-
-print(res_w,res_b)
-
+print(arr[X-1][Y-1])
 
