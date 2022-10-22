@@ -940,7 +940,7 @@ array.every(callback(element[, index[, array]]))
 
 - 배열의 **모든 요소**가 주어진 판별함수를 통과하면 true
 - 하나라도 통과못하면 false
-- 빈배열은 항상 true
+- 빈 배열은 항상 true
 
 ```javascript
 // 배열 모든 요소가 판별 함수 통과해야 true
