@@ -19,20 +19,22 @@
   <script>
     const btn = document.querySelector('#btn')
 
+    // btn이 클릭되면 함수 실행
     btn.addEventListener('click', function (event) {
+      // h1 태그를 선택해서
       const h1Tag = document.querySelector('h1')
+      // 클래스 blue를 토글하기
       h1Tag.classList.toggle('blue')
 
     })
-
+    // input
     const inputTag = document.querySelector('input')
 
-    // 2. 이벤트 핸들러 부착
+    // input에 값이 입력되면 함수 실행
     inputTag.addEventListener('input', function (event) {
-      // console.log(event)
-      // console.log(event.target.vaule)
-
+      // h1 태그를 선택해서
       const h1Tag = document.querySelector('h1')
+      // input값을 태그의 컨텐츠로 채우기
       h1Tag.innerText = event.target.value
     })
   </script>

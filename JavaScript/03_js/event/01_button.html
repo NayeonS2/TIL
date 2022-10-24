@@ -11,14 +11,21 @@
   <p id="counter">0</p>
   
   <script>
+    // id가 btn인 요소를 선택
     const btn = document.querySelector('#btn')
+    
+    // 초기값
     let countNum = 0
-    // 이벤트 핸들러
+    
+    // btn이 클릭 되었을 때마다 함수가 실행됨
     btn.addEventListener('click', function (event) {
       //console.log(event)
       const pTag = document.querySelector('#counter')
+      
+      // countNum을 증가시키고
       countNum += 1
 
+      // pTag안의 내용을 변경시킴
       pTag.innerText = countNum
     })
   </script>

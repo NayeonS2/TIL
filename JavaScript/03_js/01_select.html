@@ -21,10 +21,13 @@
 
   <script>
     console.log(document.querySelector('#title'))
+    // <h1 id="title">DOM 조작</h1>
     console.log(document.querySelectorAll('.text'))
-
+    // NodeList(2) [p.text, p.text]
     console.log(document.querySelector('.text'))
+    // <p class="text">querySelector</p>
     console.log(document.querySelectorAll('body > ul > li'))
+    // NodeList(2) [li, li]
     
     liTags = document.querySelectorAll('body > ul > li')
 

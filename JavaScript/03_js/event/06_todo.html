@@ -18,7 +18,6 @@
     const formTag = document.querySelector('form')
 
 
-
     // 콜백함수 밖으로 빼기!
     const addTodo = function (event) {
       event.preventDefault()
@@ -39,10 +38,7 @@
       } else {
         alert('내용을 입력하세요!')
       }
-  
     }
-
-
     formTag.addEventListener('submit', addTodo)
   </script>
 </body>

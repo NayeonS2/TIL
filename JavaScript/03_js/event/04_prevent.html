@@ -14,9 +14,9 @@
   <script>
     const h1Tag = document.querySelector('h1')
     h1Tag.addEventListener('copy', function (event) {
+      // copy event의 기본 동작을 막기
       event.preventDefault()
       alert('복사 할 수 없습니다!!!')
-      
     })
   </script>
 </body>
