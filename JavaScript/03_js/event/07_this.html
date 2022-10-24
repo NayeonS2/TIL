@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <button id="function">function</button>
+  <button id="arrow">arrow function</button>
+
+  <script>
+    // this와 addEventListener
+
+    // this가 호출되는 순간에 결정되는 것 (런타임) 장점/단점
+    // - 함수(메서드)를 하나만 만들어서 여러 객체에서 재사용 가능
+    // - 이런 유연함이 실수로 이어질 수 있는게 단점
+    // - 나쁜지 좋은지 판단은 우리 몫 x
+
+
+    const functionButton = document.querySelector('#function')
+    const arrowButton = document.querySelector('#arrow')
+
+    functionButton.addEventListener('click', function(event) {
+      console.log(this) // <button id="function">function</button>
+    })
+
+    arrowButton.addEventListener('click', event => {
+      console.log(this) // window (화살표함수)
+
+    })
+  </script>
+</body>
+</html>
