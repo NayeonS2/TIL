@@ -17,6 +17,10 @@
             const divTag = document.querySelector('div')
             divTag.appendChild(btn)
 
+            // div 안만들고 body 태그 내부에 append 시키려면
+            // const bodyTag = document.querySelector('body')
+            // bodyTag.appendChild(btn)
+
             btn.addEventListener('click', function (event) {
                 console.log('버튼을 클릭하였습니다!')
             })

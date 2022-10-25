@@ -141,7 +141,8 @@
 > [참고] NodeList
 - index로만 각 항목에 접근 가능
 - 배열의 forEach 메서드 및 다양한 배열 메서드 사용 가능
-- querySelectorAll()에 의해 반환되는 NodeList는 DOM의 변경사항을 실시간으로 반영하지 않음
+- querySelectorAll()에 의해 반환되는 **NodeList는 DOM의 변경사항을 실시간으로 반영하지 않음**
+  - 변경사항이 **실시간으로 반영**된다면 **인덱스가 지속적으로 변경**되어버림! (코드 작성이 어려워짐)
 
 
 ### 조작 관련 메서드 (생성)
@@ -433,7 +434,7 @@
   - "특정 Event가 발생하면, 할 일(콜백 함수)을 등록한다."
 
 ## Event 취소
-### `event.preventDefault()`
+### `event.preventDefault()` ⭐
 - 현재 Event의 기본 동작을 중단
 - HTML 요소의 기본 동작을 작동하지 않게 막음
 - HTML 요소의 기본 동작 예시
@@ -641,8 +642,8 @@ console.log(this) // window
      myFunc() // global
      ```
 
-2. Method (Function in Object, 객체의 메서드로서)
-   - 메서드로 선언하고 호출한다면, 객체의 메서드이므로 해당 객체가 바인딩
+2. <u>Method</u> (Function in Object, 객체의 메서드로서) ⭐
+   - 메서드로 선언하고 호출한다면, 객체의 메서드이므로 <u>**해당 객체가 바인딩**</u>
    - ```javascript
       const myObj = {
         data: 1,
@@ -673,8 +674,8 @@ console.log(this) // window
       myObj.myFunc() 
       ```
 
-3. Nested (화살표 함수)
-   - 이전에 일반 function 키워드와 달리 메서드의 객체를 잘 가리킴
+3. <u>Nested (화살표 함수)</u> ⭐
+   - 이전에 일반 function 키워드와 달리 <u>**메서드의 객체를 잘 가리킴**</u>
    - 화살표 함수에서 this는 자신을 감싼 정적 범위
    - 자동으로 한 단계 상위의 scope의 context를 바인딩
    - ```javascript
@@ -699,11 +700,11 @@ console.log(this) // window
   - Static scope라고도하며 대부분의 프로그래밍 언어에서 따르는 방식
 - 따라서 함수 내의 함수 상황에서 화살표 함수를 쓰는 것을 권장
 
-### this와 addEventListener
-- 하지만, addEventListener에서의 콜백 함수는 특별하게 function 키워드의 경우 addEventListener를 호출한 대상을 (event.target) 뜻함
-- 반면 화살표 함수의 경우 상위 스코프를 지칭하기 때문에 window 객체가 바인딩 됨
+### <u>this와 addEventListener</u> ⭐
+- 하지만, **addEventListener에서의 콜백 함수**는 특별하게 **function 키워드**의 경우 addEventListener를 호출한 대상을 (**event.target**) 뜻함
+- 반면 **화살표 함수**의 경우 **상위 스코프를 지칭**하기 때문에 **window 객체**가 바인딩 됨
 - 결론
-  - "addEventListener의 콜백 함수는 function 키워드를 사용하기"
+  - `this`를 사용할거면, "`addEventListener의 콜백 함수`는 `function 키워드`를 사용하기" !!
 ```html
 <!DOCTYPE html>
 <html lang="en">
