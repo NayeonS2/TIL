@@ -1,39 +1,32 @@
 import sys
-sys.stdin = open('input.txt')
-from collections import deque
+import time
+import datetime
+input = sys.stdin.readline
 
-def find():
-    idx = []
-    for i in range(N):
-        for j in range(N):
-            if arr[i][j] != 0:
-                idx.append((arr[i][j],i,j,0))
-    return sorted(idx)
+start = time.time()
 
-def bfs():
-    q = deque(find())
+N = int(input())
 
-    while q:
-        type, i, j, cnt = q.popleft()
+d = [0] * (N+1)
+d[1] = 1
 
-        if cnt == S:
-            return
-        else:
-            for di,dj in [[-1,0],[1,0],[0,-1],[0,1]]:
-                ni,nj = i+di, j+dj
-                if 0<=ni<N and 0<=nj<N:
-                    if arr[ni][nj] == 0:
-                        arr[ni][nj] = type
-                        q.append((type,ni,nj,cnt+1))
+i1,i2,i3 = 1,1,1
+mlt1,mlt2,mlt3 = 2,3,5
+for i in range(2,N+1):
+    d[i] = min(mlt1,mlt2,mlt3)
+    if d[i] == mlt1:
+        i1 += 1
+        mlt1 = d[i1] * 2
+    if d[i] == mlt2:
+        i2 += 1
+        mlt2 = d[i2] * 3
+    if d[i] == mlt3:
+        i3 += 1
+        mlt3 = d[i3] * 5
 
 
-N,K = map(int,input().split())
-
-arr = [list(map(int,input().split())) for _ in range(N)]
-
-S,X,Y = map(int,input().split())
-
-bfs()
-
-print(arr[X-1][Y-1])
-
+print(d[N])
+sec = time.time()-start
+times = str(datetime.timedelta(seconds=sec)).split(".")
+times = times[0]
+print(times)
