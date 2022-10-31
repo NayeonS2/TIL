@@ -1,6 +1,7 @@
 # 금광
 # 오른쪽위, 오른쪽, 오른쪽아래로만 이동가능할때 채굴가능한 금의 최대 크기
 # 1열은 주어짐
+# 오른쪽 열 방향으로 이동
 
 import sys
 #sys.stdin = open('input.txt')
@@ -8,7 +9,7 @@ input = sys.stdin.readline
 
 def poss(i,j):
     pos = []
-    for di,dj in [[-1,-1],[0,-1],[1,-1]]:
+    for di,dj in [[-1,-1],[0,-1],[1,-1]]:   # 왼쪽위, 왼쪽, 왼쪽아래
         ni,nj = i+di, j+dj
         if 0<=ni<n and 0<=nj<m:
             pos.append((d[ni][nj]))
@@ -26,7 +27,7 @@ for _ in range(T):
     d = [[0]*m for _ in range(n)]
 
     for i in range(n):
-        d[i][0] = gold[i][0]
+        d[i][0] = gold[i][0]    # 1열은 주어짐
 
 
     for j in range(1,m):
