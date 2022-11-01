@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 누르면 가로줄 나오게 하기위해 style 태그 삽입 -->
+    <style>
+        .completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <select v-model="status">
+            <!-- status에 따라 v-for 반복문의 대상이되는 array의 값이 변경이 되어야 출력되는 리스트의 값이 달라질 것! -->
+            <option value="all">전체</option>
+            <option value="inProgress">진행중</option>
+            <option value="completed">완료</option>
+        </select>
+        <input type="text" v-model="content">
+        <button @click="addTodo">+</button>
+        <ul>
+            <!-- v-for는 항상 :key값 설정!!! -->
+            <li v-for="todo in todoListByStatus" :key="todo.date">
+                <!-- 체크박스 바인딩 boolean (v-model 사용해도 됨!!!)-->
+                <input type="checkbox" :checked="todo.isCompleted" @click="toggleTodo(todo)"> 
+                <!-- style넣기위해 인라인 요소 span 태그 삽입 -->
+                <!-- todo.isCompleted가 true라면 completed 클래스가 바인딩될것이고 false면 안될 것-->
+                <span :class="{ completed: todo.isCompleted }">{{ todo.content }}</span>
+            </li>
+        </ul>
+        
+        <button @click="deleteCompleted">완료된 할 일 지우기</button>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data: {
+                content: '',
+                todoList: [],
+                isCompleted: false,
+                status: 'all',
+                // for 문에서 key값
+                date: Date.now(),
+
+            },
+            methods: {
+                addTodo: function () {
+                    // 각각의 todo를 object형태로 관리해서 todoList에 push !!!
+                    const todo = {
+                        content: this.content,
+                        isCompleted: false,
+                    }
+                    this.todoList.push(todo)
+                    this.content = ''   // input 비우기
+                },
+                toggleTodo: function (todo) {
+                    todo.isCompleted = !todo.isCompleted
+                },
+                deleteCompleted() {
+                    // 완료되지 않은 것들만 재할당
+                    // 메서드 안에 콜백함수는 화살표 사용하자!
+                    this.todoList = this.todoList.filter(todo => {
+                        return !todo.isCompleted
+
+                    })
+                }
+
+            },
+            computed: {
+                todoListByStatus: function () {
+                    // 콜백함수로 하면 this가 window객체가 돼서 오류남!!!!
+                    const newTodoList = this.todoList.filter((todo) => {
+                        if (this.status === 'inProgress') {
+                            return !todo.isCompleted    // 진행중인 것들만 리턴
+                        } else if (this.status === 'completed') {
+                            return todo.isCompleted
+                        } else {
+                            return true
+                        }
+                        
+                    })
+                    return newTodoList
+                }
+
+            },
+        })
+
+    </script>
+    
+</body>
+</html>

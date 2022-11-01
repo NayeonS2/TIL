@@ -8,13 +8,19 @@
 </head>
 <body>
   <div id="app">
-    <h2>첫 번째 입력 : {{ myMessage }}</h2>
-    <input @input="onInputChange" type="text">
+    <h2>첫 번째 입력 : {{ myMessage1 }}</h2>
+    <!-- <input @input="onInputChange" type="text"> -->
+    <!-- <input type="text" v-on:input="firstInput"> -->
+    <input type="text" @input="firstInput">
     
     <h2>두 번째 입력 : {{ myMessage2 }}</h2>
+    <!-- 양방향 바인딩 (DOM->변수, 변수->DOM)
+    v-model은 사용자 입력을 받는 태그들에 사용! 
+    input, textarea, select-->
     <input v-model="myMessage2" type="text">
 
     <h2>합산 입력 : {{ add_method() }}</h2>
+    <h2>합산 입력 : {{ combined }}</h2>
     
   
   </div>
@@ -24,17 +30,26 @@
     const app = new Vue({
       el: '#app',
       data: {
-        myMessage: '',
+        myMessage1: '',
         myMessage2: '',
       },
       methods: {
-        onInputChange: function (event) {
-          this.myMessage = event.target.value
+        // onInputChange: function (event) {
+        //   this.myMessage = event.target.value
+        // },
+        firstInput: function (event) {
+          this.myMessage1 = event.target.value
         },
         add_method: function () {
           
-          return this.myMessage + this.myMessage2
+          return this.myMessage1 + this.myMessage2
         },
+      },
+      computed: {
+        combined: function () {
+          return this.myMessage1 + this.myMessage2
+
+        }
       }
     })
   </script>
