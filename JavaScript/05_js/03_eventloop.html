@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    console.log('Hi')
+
+    setTimeout(function () {
+      console.log('SSAFY')
+    }, 3000)
+    // 지연시간을 0초로 바꿔도 일단 얘는 web api로 보내지기때문에 출력 순서는 변하지 않음!
+    // n초뒤 출력이 아니라, 최소 지연시간이 n초라는것!
+    console.log('Bye')
+  </script>
+</body>
+</html>
