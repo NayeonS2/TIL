@@ -895,6 +895,12 @@ export default {
 - 부모 컴포넌트에서는 자식 컴포넌트의 이벤트를 청취
   - 전달받은 데이터는 이벤트 핸들러 함수의 인자로 사용
 
+
+> [주의] `.native` 사용
+- **컴포넌트** `@click`일때는 `.native` 붙여야함
+- 컴포넌트가 아닌 경우, 위의 예시들처럼 button 등일때는 안붙여도됨!
+
+
 ### pass props / emit event 컨벤션
 - **HTML** 요소에서 사용할땐 **kebab-case**
 - **JavaScript**에서 사용할땐 **camelCase**
