@@ -1,0 +1,51 @@
+* {
+  list-style-type: none;
+  font-family: 'NanumSquare', sans-serif;
+}
+input {
+  border: 0;
+  background-color: rgba(0,0,0,0);
+}
+input:hover {
+  color: #aaa;
+  transition: all 0.1s;
+}
+ul {
+  padding: 0;
+}
+a {
+  color: #333;
+  text-decoration: none;
+}
+h1 {
+  font-weight: 900;
+}
+.navbar .left > div {
+  display: inline-block;
+  padding: 0 10px;
+}
+.navbar .left a:hover {
+  color: #aaa;
+  transition: all 0.1s;
+}
+.navbar .right a:hover {
+  color: #aaa;
+  transition: all 0.1s;
+}
+.navbar .right > div {
+  display: inline-block;
+  padding: 0 10px;
+}
+.navbar div a img {
+  display: inline-block;
+  height: 50px;
+}
+.dropdown {
+  transition: all 0.3s;
+}
+.dropdown-menu {
+  padding: 10px 10px;
+}
+body > .container {
+  padding-top: 20px;
+}

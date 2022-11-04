@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>RECOMMENDED MOVIES</h1>
+  {% for recom in recommended_list %}
+    <img src="{{ recom|last }}" alt="영화 포스터">
+    <p>{{ recom|slice:":1"|join:" " }}위</p>
+    <p>제목 {{ recom|slice:"1:2"|join:" " }}</p>
+    <p>평점 {{ recom|slice:"2:3"|join:" " }}</p>
+    <p>개봉일자 {{ recom|slice:"3:4"|join:" " }}</p>
+    <hr>
+  {% endfor %}
+{% endblock %}
