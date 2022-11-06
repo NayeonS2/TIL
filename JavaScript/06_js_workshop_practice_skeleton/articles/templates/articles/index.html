@@ -64,7 +64,7 @@
         // axios로 우리 서버에 좋아요 요청
         // csrf 토큰을 같이 넣어서 전달해야 함
         // 왜냐면 form 요청을 preventDefault로 요청을 막았기 때문에
-        // form에 작성된 csfr 토큰이 추가된 요청이 이루어 지는 것이 아니고
+        // form에 작성된 csrf 토큰이 추가된 요청이 이루어 지는 것이 아니고
         // 따로 axios로 요청을 하는 것이기 때문에 이 axios는 csrf 토큰 정보가 없는 상태!
 
         // 속성 선택자를 이용해서 {% csrf_token %}의 csrf_token 데이터를 가져옴

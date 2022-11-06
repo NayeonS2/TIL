@@ -769,7 +769,7 @@ def follow(request, user_pk):
     forms.forEach((form) => {
       form.addEventListener('submit', function (event) {
         event.preventDefault()
-        // onsole.log(event.target.dataset)
+        // console.log(event.target.dataset)
 
         const articleId = event.target.dataset.articleId
 
