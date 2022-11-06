@@ -369,7 +369,7 @@ type of undefined   // "undefined"
 ### 비교 연산자
 - 피연산자들(숫자, 문자, boolean)을 비교, 결과값을 boolean으로 반환
 - 문자열은 유니코드 값 사용, 표즌 사전 순서 기반 비교
-  - 알파벳 후순위가 더크고, 소문자보다 대문자가 더큼
+  - 알파벳 후순위가 더크고, 소문자가 대문자보다 더큼
 
 <img src="./javascript_img/comp_oper.png">
 
