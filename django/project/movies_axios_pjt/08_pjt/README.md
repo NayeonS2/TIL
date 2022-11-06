@@ -263,65 +263,29 @@
   {% extends 'base.html' %}
 
   {% block content %}
-    <h2 class="text-center">DETAIL</h2>
-    <h3>{{ review.pk }} 번째 글</h3>
+    <h1>DETAIL</h1>
     <hr>
-    <p>제목: {{ review.title }}</p>
-    <p>영화 제목: {{ review.movie_title }}</p>
-    <p>내용: {{ review.content }}</p>
-    <p>평점: {{ review.rank }}</p>
-    <p>작성 시각: {{ review.created_at }}</p>
-    <p>수정 시각: {{ review.updated_at }}</p>
-    <hr>
-    <h4>댓글 목록</h4>
-    {% if comments|length %}
-      <p><b>{{ comments|length }}개의 댓글이 있습니다.</b></p>
-    {% endif %}
-
-    {% for comment in comments %}
+    <div>
+      <img src="{{ movie.poster_path }}" alt="영화 포스터">
       <div>
-        {{ comment.user }} - {{ comment.content }}
-
-      
-            
-        <form action="{% url 'community:create_recomment' review.pk %}" method="POST">
-          {% csrf_token %}
-          {% for recom in recomment_form %}
-
-            {% if recom.label != 'Comment' %}
-          
-            {{ recom.label }} : {{ recom }}
-
-            {% endif %}
-          
-          {% endfor %}
-
-          <input type="hidden" name="comment" value={{comment.pk}}>
-          <input type="submit" value="답글">
-
-        </form>
-
-        {% for recom in comment.recomment_set.all %}
-        ↪{{recom}}<br>
-        {% endfor %}
-      <hr>
-
+        <h3>{{ movie.title }}</h3>
+        <p>Release date : {{ movie.release_date }}</p>
+        <p>Popularity : {{ movie.popularity }}</p>
+        <p>Vote count: {{ movie.vote_count }}</p>
+        <p>Vote average: {{ movie.vote_average }}</p>
+        <p>Genres: {{ genres_list|join:" " }}</p>
+        <p>{{ movie.overview }}</p>
       </div>
-    {% empty %}
-      <p><b>댓글이 없어요..</b></p>
-    {% endfor %}
-    <hr>
-    {% if user.is_authenticated %}
-      <form action="{% url 'community:create_comment' review.pk %}" method="POST">
-        {% csrf_token %}
-        {{ comment_form }}
-        <input type="submit">
-      </form>
-    {% else %}
-      <a href="{% url 'accounts:login' %}">[댓글을 작성하려면 로그인하세요.]</a>
-    {% endif %}
-    <a href="{% url 'community:index' %}">BACK</a>
-  {% endblock  %}
+    </div>
+
+    <input type="submit" value="BACK" onclick="location.href='{% url 'movies:index' %}'">
+  {% endblock %}
+
+  {% block script %}
+    <script>
+      
+    </script>
+  {% endblock script %}
   ```
   ```python
   # movies/views.py
