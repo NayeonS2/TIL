@@ -4,9 +4,9 @@
 
 ### 상태 관리
 - 상태(state)란?
-  - 현재에 대한 정보(data)
+  - `현재에 대한 정보(data)`
 - Web Application에서의 상태는
-  - 현재 App이 가지고있는 Data로 표현
+  - `현재 App이 가지고있는 Data로 표현`
 - 여러개의 component를 조합해서 하나의 App을 만들고 있음
 - 각 component는 독립적, 각각의 상태(data)를 가짐
 - 하지만, 이들이 모여 하나의 App을 구성할 예정
@@ -14,15 +14,24 @@
     - 상태 관리 필요!
 
 ### Pass Props & Emit Event
+
+<img src="./Vue_img/props_emit_data.png">
+
+
 - 지금까지 props, event를 이용해 상태관리를 하고있음
 - 각 컴포넌트는 독립적으로 데이터를 관리
-- 같은 데이터를 공유하고 있으므로,
+- `같은 데이터를 공유`하고 있으므로,
 - 각 컴포넌트가 동일한 상태를 유지하고 있음
 - 데이터 흐름을 직관적으로 파악 가능
 - 그러나 컴포넌트의 중첩이 깊어지면 데이터 전달이 쉽지않음
 - 공통의 상태를 유지해야하는 컴포넌트가 많아지면 데이터 전달 구조가 복잡해짐
+- 만약 A에서 B로 데이터를 전달해야 한다면?
+  - 어떻게하면 쉽게 해결할 수 있을까?
 
 ### Centralized Store
+
+<img src="./Vue_img/centralized_store.png">
+
 - `중앙저장소(store)에 데이터를 모아서 상태관리`
 - 각 컴포넌트는 중앙저장소의 데이터를 사용
 - 컴포넌트의 **계층에 상관없이** 중앙저장소에 접근해서 데이터를 얻거나 변경 가능
@@ -40,14 +49,33 @@
 ---
 ## Vuex 시작하기
 
+```javascript
+$ vue create vuex-app   // Vue 프로젝트 생성
+$ cd vuex-app           // 디렉토리 이동
+$ vue add vuex          // Vue CLI를 통해 vuex plugin 적용
+```
 
+### 프로젝트 with vuex
+- scr / store / index.js 가 생성됨
+- vuex의 핵심 컨셉 4가지
+  - 1.state
+  - 2.getters
+  - 3.mutations
+  - 4.actions
+
+<img src="./Vue_img/project_with_vuex.png">
+
+
+### Vue와 Vuex 인스턴스 비교
+
+<img src="./Vue_img/vue_vuex.png">
 
 
 ### 1.State
 - vue 인스턴스의 `data`에 해당
 - `중앙에서 관리하는 모든 상태 정보`
 - 개별 컴포넌트는 state에서 데이터를 가져와서 사용
-  - 개별 컴포넌트가 관리하던 data를 중앙저장소에서 관리하게 됨
+  - 개별 컴포넌트가 관리하던 data를 중앙저장소(Vuex Store의 state)에서 관리하게 됨
 - state의 데이터가 변화하면 해당 데이터를 사용(공유)하는 컴포넌트도 자동으로 다시 렌더링
 - `$store.state`로 state 데이터에 접근 (read_only)
 
@@ -129,6 +157,9 @@ const obj2 = {
 ```
 
 ### src / store / index.js
+
+<img src="./Vue_img/vuex_main_concepts.png">
+
 - vuex의 핵심 컨셉 4가지
   - state
   - getters
@@ -141,55 +172,227 @@ const obj2 = {
 - `$store.state`로 접근 가능
 - store의 state에 message 데이터 정의
 
+```javascript
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+
+export default new Vuex.Store({
+  state: {
+    message: 'message in store',
+  },
+  getters: {
+   
+  },
+  mutations: {
+    
+  },
+  actions: {
+    
+  },
+  modules: {
+  }
+})
+```
+
+
 - component에서 state 사용
 
+```javascript
+// App.vue
+
+<template>
+  <div id="app">
+    <h1>{{ $store.state.message }}</h1>
+  </div>
+</template>
+```
+
 - $store.state로 바로 접근하기 보다 `computed`에 정의 후 접근하는 것을 권장
+
+```javascript
+<template>
+  <div id="app">
+    <h1>{{ message }}</h1>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'App',
+  computed : {
+    message() {
+      return this.$store.state.message
+    },
+  },
+}
+</script>
+```
 
 
 
 ### actions
 - state를 변경할 수 있는 `mutations 호출`
 - component에서 `dispatch()에 의해 호출됨`
-- dispatch(A, B)
+- `dispatch(A, B)`
   - A: 호출하고자 하는 actions 함수 == 값을 전달하는 위치
   - B: 넘겨주는 데이터(payload) == 저장하고자 하는 데이터
 
 - actions에 정의된 changeMessage 함수에 데이터 전달하기
 - component에서 actions는 `dispatch()`에 의해 호출됨
 
-- actions의 첫번째 인자는 context
+```javascript
+// App.vue
+
+<template>
+  <div id="app">
+    <h1>{{ message }}</h1>
+    <h2>입력된 문자의 길이는 {{ messageLength }}</h2>
+    <input 
+    type="text"
+    @keyup.enter="changeMessage"
+    v-model="inputData"
+    >
+  </div>
+</template>
+
+<script>
+
+export default {
+  name: 'App',
+  data() {
+    return {
+      inputData: null,
+
+    }
+  },
+  computed : {
+    message() {
+      return this.$store.state.message
+    },
+    messageLength() {
+      return this.$store.getters.messageLength
+    },
+  },
+  methods : {
+    changeMessage() {
+      const newMessage = this.inputData
+      this.$store.dispatch('changeMessage', newMessage)
+    }
+    
+  }
+}
+</script>
+```
+
+- actions의 첫번째 인자는 `context`
   - context는 store의 전반적인 속성을 모두 가지고 있으므로 context.state와 context.getters를 통해 mutations를 호출하는 것이 모두 가능
   - dispatch()를 사용해 다른 actions도 호출 가능
-- actions의 두번째 인자는 payload
+  - **단, actions에서 state를 직접 조작하는 것은 삼가야 함**
+- actions의 두번째 인자는 `payload`
   - 넘겨준 데이터를 받아서 사용
 
 ### mutations
+
+```javascript
+export default new Vuex.Store({
+  ...
+  actions: {
+    changeMessage(context, newMessage) {
+      // console.log(context)
+      // console.log(newMessage)
+      context.commit('CHANGE_MESSAGE',newMessage)
+    },
+  },
+  ...
+})
+```
+
 - "actions에서 commit()을 통해 mutations 호출하기"
 - mutations는 state를 변경하는 유일한 방법
-- component 또는 actions에서 commit()에 의해 호출됨
+- component 또는 actions에서 `commit()에 의해 호출됨`
 
-- commit(A,B)
+- `commit(A,B)`
   - A: 호출하고자 하는 mutations 함수
   - B: payload
 
 - "mutations 함수 작성하기"
 - mutations는 state를 변경하는 유일한 방법
 - mutations 함수의
-  - 첫번째 인자는 state
-  - 두번째 인자는 payload
+  - 첫번째 인자는 **state**
+  - 두번째 인자는 **payload**
 
 ### getters
-- getters는 state를 활용한 새로운 변수
+- `getters는 state를 활용한 새로운 변수`
 - getters 함수의
-  - 첫번째 인자는 state
-  - 두번째 인자는 getters
+  - 첫번째 인자는 **state**
+  - 두번째 인자는 **getters**
+
+```javascript
+// store/index.js
+export default new Vuex.Store({
+  ...
+  getters: {
+    messageLength(state) {
+      return state.message.length
+    },
+    // messageLength를 이용해서 새로운 값 계산
+    doubleLength(state, getters) {
+      return getters.messageLength * 2
+    },
+  },
+  ...
+})
+```
+- "getters 출력하기"
+- getters 역시 state와 마찬가지로 computed에 정의해서 사용하는 것을 권장
+
+```javascript
+// App.vue
+<script>
+
+export default {
+  ...
+  computed : {
+    message() {
+      return this.$store.state.message
+    },
+    messageLength() {
+      return this.$store.getters.messageLength
+    },
+    doubleLength() {
+      return this.$store.getters.doubleLength
+    },
+  },
+  ...
+}
+</script>
+```
+
+```javascript
+// App.vue
+...
+<template>
+  <div id="app">
+    <h1>{{ message }}</h1>
+    <h2>입력된 문자의 길이는 {{ messageLength }}</h2>
+    <h2>x2 : {{ doubleLength }}</h2>
+    <input 
+    type="text"
+    @keyup.enter="changeMessage"
+    v-model="inputData"
+    >
+  </div>
+</template>
+```
 
 ---
 
 ## Lifecycle Hooks
 - 각 Vue 인스턴스는 생성과 소멸의 과정 중 단계별 초기화 과정을 거침
-  - Vue 인스턴스가 생성된 경우, 인스턴스를 DOM에 마운트하는 경우,
-  - 데이터가 변경되어 DOM를 업데이트하는 경우 등
+  - Vue 인스턴스가 **생성**된 경우, 인스턴스를 DOM에 **마운트**하는 경우,
+  - 데이터가 변경되어 DOM를 **업데이트**하는 경우 등
 - 각 단계가 트리거가 되어 특정 로직을 실행할 수 있음
 - 이를 Lifecycle Hooks이라고 함
 
