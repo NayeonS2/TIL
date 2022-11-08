@@ -80,7 +80,7 @@ $ vue add vuex          // Vue CLI를 통해 vuex plugin 적용
 - `$store.state`로 state 데이터에 접근 (read_only)
 
 
-### 2.Mutations
+### 2.Mutations ⭐
 - `실제로 state를 변경하는 **유일한 방법**`
 - vue 인스턴스의 methods에 해당하지만 Mutations에서 호출되는 핸들러(handler) 함수는 반드시 `동기적`이어야함
   - 비동기 로직으로 mutations를 사용해서 state를 변경하는 경우, **state의 변화의 시기를 특정할 수 없기 때문**
@@ -88,12 +88,12 @@ $ vue add vuex          // Vue CLI를 통해 vuex plugin 적용
 - 컴포넌트 혹은 Actions에서 `commit()` 메서드로 호출됨
 - mutaion, action에서 호출되는 함수를 handler 함수라고 함
 
-### 3.Actions
+### 3.Actions ⭐
 - mutations와 비슷하지만 `비동기` 작업을 포함할 수 있다는 차이가 있음
 - `state를 직접 변경하지 않고 commit() 메서드로 mutations를 호출해서 state를 변경함`
 - **context** 객체를 인자로 받으며, 이 객체를 통해 store.js의 모든 요소와 메서드에 접근할 수 있음
   - == 즉 state를 직접 변경할 수 있지만 하지 않아야 함
-- 컴포넌트에서 `dispatch()` 메서드에 의해 호출됨
+- 컴포넌트에서 `dispatch()` 메서드에 의해 호출됨 (저장해야할때 dispatch 호출!)
 
 ### Mutations & Actions
 
@@ -108,7 +108,7 @@ $ vue add vuex          // Vue CLI를 통해 vuex plugin 적용
 
 ### 4.Getters
 - vue 인스턴스의 computed에 해당
-- `state를 활용하여 계산된 값을 얻고자 할 때 사용`
+- `state를 활용하여 계산된 값❗(return 필수) 을 얻고자 할 때 사용`
 - state의 원본 데이터를 건들지 않고 계산된 값을 얻을 수 있음
 - computed와 마찬가지로 getters의 결과는 캐시(cache)되며,
 - 종속된 값이 변경된 경우에만 재계산됨
@@ -398,7 +398,9 @@ export default {
 
 <img src="./Vue_img/lifecycle_hooks.png">
 
-### created
+<img src="./Vue_img/lifecycle_hooks_practice.png">
+
+### created ⭐
 - Vue instance가 생성된 후 호출됨
 - data, computed 등의 설정이 완료된 상태
 - 서버에서 받은 데이터를 vue instance의 data에 할당하는 로직을 구현하기 적합
@@ -408,17 +410,60 @@ export default {
 - 버튼을 누르지 않아도 첫 실행 시 기본 사진이 출력되도록 하고 싶다면
 - created 함수에 강아지 사진을 가져오는 함수를 추가
 
+```javascript
+// components/DogComponent.vue
 
-### mounted
+export default {
+  ...
+  created() {
+    this.getDogImage()
+  },
+}
+```
+
+### mounted ⭐
 - Vue instance가 요소에 mount된 후 호출됨
 - mount된 요소를 조작할 수 있음
 
-### updated
+```javascript
+// components/DogComponent.vue
+
+export default {
+  ...
+  mounted() {
+      const button = document.querySelector('button')
+      button.innerText = '멍멍!'
+  },
+}
+```
+
+### updated ⭐
 - 데이터가 변경되어 DOM에 변화를 줄 때 호출됨
+
+```javascript
+// components/DogComponent.vue
+
+export default {
+  ...
+  updated() {
+    console.log('새로운 멍멍이!')
+    console.log('Child updated!')
+  },
+}
+```
 
 ### Lifecycle Hooks 특징
 - instance마다 각각의 Lifecycle을 가지고 있음
 
+<img src="./Vue_img/lifecycle_hooks02.png">
+
+- Lifecycle Hooks는 컴포넌트별로 정의할 수 있음
+- 현재 해당 프로젝트는 
+  - **App.vue 생성 => ChildComponent 생성 => ChildComponent 부착 => App.vue 부착 => ChildComponent 업데이트** 순으로 동작한 것
+
+- 부모 컴포넌트의 mounted hook이 실행되었다고 해서 자식이 mount 된 것이 아니고,
+- 부모 컴포넌트가 updated hook이 실행되었다고 해서 자식이 updated 된 것이 아님
+  - 부착 여부가 부모-자식 관계에 따라 순서를 가지고 있지 않은 것
+- `instance마다 각각의 Lifecycle을 가지고 있기 때문`
 
 
-  
