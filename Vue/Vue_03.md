@@ -452,6 +452,98 @@ export default {
 }
 ```
 
+### Lifecycle Hooks 예제 - get Cat Image
+
+```javascript
+// index.js
+import Vue from 'vue'
+import Vuex from 'vuex'
+import axios from 'axios'
+Vue.use(Vuex)
+
+export default new Vuex.Store({
+  state: {
+    catImg: null,
+  },
+  getters: {
+    catImage(state) {
+      return state.catImg
+    }
+  },
+  mutations: {
+    SAVE_CAT_IMG (state, catImg) {
+      state.catImg = catImg
+    }
+  },
+  actions: {
+    getCat(context) {
+      const catURL = "https://api.thecatapi.com/v1/images/search"
+      axios({
+        method: 'GET',
+        url: catURL,
+      })
+      .then( res => {
+        const catImg = res.data[0].url
+        context.commit('SAVE_CAT_IMG', catImg)
+      })
+      .catch( err => {
+        console.log(err)
+      })
+    }
+  },
+  modules: {
+  }
+})
+```
+```javascript
+// App.vue
+<template>
+  <div id="app">
+    <h1>Cat Image</h1>
+    <button @click="getCat">Get Cat</button>
+    <img :src="catImage" alt="#">
+  </div>
+</template>
+
+<script>
+
+export default {
+  name: 'App',
+  components: {
+   
+  },
+  methods: {  
+    getCat() {
+      this.$store.dispatch('getCat')
+    }
+  },
+  computed: {
+    catImage() {
+      return this.$store.getters.catImage
+    }
+  },
+  created() {
+    this.getCat()
+  },
+  updated() {
+    console.log('이미지 리소스가 업데이트 되었습니다.')
+  }
+}
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+</style>
+```
+
+
 ### Lifecycle Hooks 특징
 - instance마다 각각의 Lifecycle을 가지고 있음
 
@@ -466,4 +558,468 @@ export default {
   - 부착 여부가 부모-자식 관계에 따라 순서를 가지고 있지 않은 것
 - `instance마다 각각의 Lifecycle을 가지고 있기 때문`
 
+---
 
+## Todo with Vuex
+### 개요
+- Vuex를 사용한 Todo 프로젝트 만들기
+- 구현 기능
+  - Todo CRUD
+  - Todo 개수 계산
+    - 전체 Todo
+    - 완료된 Todo
+    - 미완료된 Todo 
+
+
+- 컴포넌트 구성
+
+<img src="./Vue_img/todo_components.png">
+
+- 완성 화면
+
+<img src="./Vue_img/todo_finished.png">
+
+### 사전 준비
+- 프로젝트 생성 및 vuex 플러그인 추가
+```
+$ vue create todo-vuex-app
+$ cd todo-vuex-app
+$vue add vuex
+```
+- HelloWorld 컴포넌트 및 관련 코드 삭제
+- 컴포넌트 작성
+
+<img src="./Vue_img/todo01.png">
+
+<img src="./Vue_img/todo02.png">
+
+<img src="./Vue_img/todo03.png">
+
+<img src="./Vue_img/todo04.png">
+
+### Read Todo
+- State 세팅
+  - 출력을 위한 기본 todo 작성
+
+<img src="./Vue_img/todo_read01.png">
+
+- state 데이터 가져오기
+  - 컴포넌트에서 Vuex Store의 state에 접근 (`$store.state`)
+  - computed로 계산된 todo 목록을 가져올 수 있도록 설정
+
+<img src="./Vue_img/todo_read02.png">
+
+- Pass Props
+  - TodoList.vue -> TodoList.vue
+  - todo 데이터 내려받기
+
+<img src="./Vue_img/todo03.png">
+
+<img src="./Vue_img/todo04.png">
+
+---
+
+### Create Todo
+
+- TodoForm
+  - todoTitle을 입력받을 input 태그 생성
+  - todoTitle을 저장하기 위해 data를 정의하고 input과 v-model을 이용해 양방향 바인딩
+  - enter 이벤트를 사용해 createTodo 메서드 출력 확인
+
+<img src="./Vue_img/todo_create01.png">
+
+- Actions
+  - createTodo 메서드에서 actions을 호출 (`dispatch`)
+  - todoTitle까지 함께 전달하기
+
+<img src="./Vue_img/todo_create02.png">
+
+  - actions에는 보통 비동기 관련 작업이 진행되지만 현재 별도의 비동기 관련 작업이 불필요하기 때문에 입력 받은 todo 제목(todoTitle)을 todo 객체(todoItem)로 만드는 과정을 actions에서 작성할 예정
+  - createTodo에서 보낸 데이터를 수신 후 todoItem object를 생성
+
+<img src="./Vue_img/todo_create03.png">
+
+- Mutations
+  - CREATE_TODO mutations 메서드에 todoItem를 전달하며 호출 (`commit`)
+  - mutations에서 state의 todos에 접근해 배열에 요소를 추가
+  - Todos의 기존 dummy 데이터를 삭제, 빈 배열로 수정
+
+
+<img src="./Vue_img/todo_create04.png">
+
+<img src="./Vue_img/todo_create05.png">
+
+- 공백 문자가 입력되지 않도록 처리하기
+  - `v-model.trim` & `if (this.todoTitle)`
+    - 좌우 공백 삭제
+    - 빈 문자열이 아닐 경우만 작성
+
+<img src="./Vue_img/todo_create06.png">
+
+<img src="./Vue_img/todo_create07.png">
+
+- 중간 정리
+  - Vue 컴포넌트의 method에서 `dispatch()`를 사용해 actions 메서드를 호출
+  - Actions에 정의된 함수는 `commit()`을 사용해 mutations를 호출
+  - Mutations에 정의된 함수가 최종적으로 state를 변경
+
+---
+
+### Delete Todo
+
+- TodoListItem
+  - TodoListItem 컴포넌트에 삭제 버튼 및 deleteTodo 메서드 작성
+
+<img src="./Vue_img/todo_delete01.png">
+
+- Actions
+  - deleteTodo 메서드에서 deleteTodo actions 메서드 호출 (`dispatch`)
+  - 삭제되는 todo를 함께 전달
+
+<img src="./Vue_img/todo_delete02.png">
+  
+
+  - deleteTodo actions 메서드에서 DELETE_TODO mutations 메서드 호출 (`commit`)
+
+<img src="./Vue_img/todo_delete03.png">
+
+- Mutations
+  - DELETE_TODO 메서드 작성
+
+<img src="./Vue_img/todo_delete04.png">
+
+  - 전달된 todoItem에 해당하는 todo 삭제
+  - 작성 후 삭제 테스트
+
+<img src="./Vue_img/todo_delete05.png">
+
+---
+
+### Update Todo
+
+- TodoListItem
+  - todo를 클릭하면 완료표시의 의미로 취소선 스타일을 적용하는 기능 구현
+    - 즉 todo의 isCompleted값 토글하기
+    - TodoListItem 컴포넌트에 클릭 이벤트를 추가 후 관련 actions 메서드 호출
+
+<img src="./Vue_img/todo_update01.png">
+
+- Actions
+  - updateTodoStatus 메서드 작성
+  - 관련 mutations 메서드 호출
+
+<img src="./Vue_img/todo_update02.png">
+
+- Mutations
+  - UPDATE_TODO_STATUS 메서드 작성
+
+<img src="./Vue_img/todo_update03.png">
+
+  - map 메서드를 활용해 선택된 todo의 isCompleted를 반대로 변경 후 기존 배열 업데이트
+
+<img src="./Vue_img/todo_update04.png">
+
+- 취소선 스타일링
+  - v-bind를 활용해 isCompleted 값에 따라 css 클래스가 토글 방식으로 적용되도록 작성
+
+<img src="./Vue_img/todo_update05.png">
+
+<img src="./Vue_img/todo_update06.png">
+
+----
+
+### 상태별 todo 개수 계산
+
+- 전체 todo 개수
+  - allTodosCount getters 작성
+  - state에 있는 todos 배열의 길이 계산
+
+<img src="./Vue_img/count_todo01.png">
+
+  - getters에 계산된 값을 각 컴포넌트의 computed에서 사용하기
+
+<img src="./Vue_img/count_todo02.png">
+
+- 완료된 todo 개수
+  - completedTodosCount getters 작성
+  - isCompleted가 true인 todo들만 필터링한 배열을 만들고 길이 계산
+  - filter를 활용하여 완료 여부에 따른 새로운 객체 목록을 작성 후 길이 반환
+
+
+<img src="./Vue_img/count_todo03.png">
+
+  - getters에 계산된 값을 각 컴포넌트의 computed에서 사용하기
+
+<img src="./Vue_img/count_todo04.png">
+
+- 미완료된 todo 개수
+  - === 전체 개수 - 완료된 개수
+- getters가 두번째 인자로 getters를 받는 것을 활용하기
+- unCompletedTodosCount getters 작성
+
+<img src="./Vue_img/count_todo05.png">
+
+  - getters에 계산된 값을 각 컴포넌트의 computed에서 사용하기
+
+<img src="./Vue_img/count_todo06.png">
+
+
+### 최종코드
+```javascript
+// index.js
+
+import Vue from 'vue'
+import Vuex from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
+
+Vue.use(Vuex)
+
+export default new Vuex.Store({
+  plugins: [
+    createPersistedState(),
+  ],
+  state: {
+    todos: []
+  },
+  getters: {
+    allTodosCount(state) {
+      return state.todos.length
+    },
+    completedTodosCount(state) {
+      const completed = state.todos.filter((todo) => {
+        return todo.isCompleted == true
+      })
+      return completed.length
+    },
+    unCompletedTodosCount(state, getters) {
+      return getters.allTodosCount - getters.completedTodosCount
+    },
+  },
+  mutations: {
+    CREATE_TODO (state, todo) {
+      state.todos.push(todo)
+    },
+    DELETE_TODO (state, todo) {
+      const idx = state.todos.indexOf(todo)
+      state.todos.splice(idx, 1)
+    },
+    UPDATE_TODO (state, todo) {
+      state.todos = state.todos.map((data) => {
+        if (data === todo) {
+          data.isCompleted = !data.isCompleted
+        }
+        return data
+      })
+    }
+  },
+  actions: {
+    createTodo(context, inputTodo) {
+      const todo = {
+        title: inputTodo,
+        isCompleted: false,
+      }
+      context.commit('CREATE_TODO', todo)
+    },
+    deleteTodo(context, todo) {
+      context.commit('DELETE_TODO', todo)
+    },
+    updateTodo(context, todo) {
+      context.commit('UPDATE_TODO', todo)
+    }
+  },
+  modules: {
+  }
+})
+```
+
+```javascript
+// App.vue
+
+<template>
+  <div id="app">
+    <h1>Todo List</h1>
+    <h2>All Todos: {{ allTodosCount }}</h2>
+    <h2>Completed Todos: {{ completedTodosCount }}</h2>
+    <h2>Uncompleted Todos: {{ unCompletedTodosCount }}</h2>
+    <TodoList/>
+    <TodoForm/>
+  </div>
+</template>
+
+<script>
+import TodoList from '@/components/TodoList'
+import TodoForm from '@/components/TodoForm'
+
+export default {
+  name: 'App',
+  components: {
+    TodoList,
+    TodoForm,
+  },
+  computed: {
+    allTodosCount() {
+      return this.$store.getters.allTodosCount
+    },
+    completedTodosCount() {
+      return this.$store.getters.completedTodosCount
+    },
+    unCompletedTodosCount() {
+      return this.$store.getters.unCompletedTodosCount
+    },
+  }
+}
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+</style>
+```
+
+```javascript
+// TodoList.vue
+
+<template>
+  <div>
+    <TodoListItem
+    v-for="(todo,index) in todos"
+    :key="index"
+    :todo="todo"
+    />  
+  </div>
+</template>
+
+<script>
+import TodoListItem from '@/components/TodoListItem'
+export default {
+    name: 'TodoList',
+    components: {
+        TodoListItem,
+    },
+    computed: {
+        todos() {
+            return this.$store.state.todos
+        }
+    }
+
+}
+</script>
+
+<style>
+
+</style>
+```
+
+```javascript
+// TodoListItem.vue
+
+<template>
+  <div>
+    <span 
+    @click="updateTodo"
+    :class="{ 'is-completed' : todo.isCompleted }"
+    >{{ todo.title }}</span>
+    <button @click="deleteTodo">Delete</button>
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'TodoListItem',
+    props: {
+        todo: Object,
+    },
+    methods: {
+        deleteTodo() {
+            this.$store.dispatch('deleteTodo', this.todo)
+        },
+        updateTodo() {
+            this.$store.dispatch('updateTodo', this.todo)
+        }
+    }
+}
+</script>
+
+<style>
+    .is-completed {
+        text-decoration: line-through;
+    }
+</style>
+```
+
+```javascript
+// TodoForm.vue
+
+<template>
+  <div>
+    <input type="text"
+    v-model.trim="inputTodo"
+    @keyup.enter="createTodo"
+    >
+
+  </div>
+</template>
+
+<script>
+export default {
+    name: 'TodoForm',
+    data() {
+        return {
+            inputTodo: null,
+        }
+    },
+    methods: {
+        createTodo() {
+            if (this.inputTodo) {
+                this.$store.dispatch('createTodo', this.inputTodo)
+            }
+            
+            this.inputTodo = null
+        }
+    }
+}
+</script>
+
+<style>
+
+</style>
+```
+
+---
+
+## Local Storage
+
+- 브라우저의 Local Storage에 todo데이터를 저장하여 브라우저를 종료하고 다시 실행해도 데이터가 보존될 수 있도록 하기
+
+### Window.localStorage
+- 브라우저에서 제공하는 저장공간 중 하나인 Local Storage에 관련된 속성
+- 만료되지 않고 브라우저를 종료하고 다시 실행해도 데이터가 보존됨
+- 데이터가 문자열 형태로 저장됨
+- 관련 메서드
+  - setItem(key, value) - key, value 형태로 데이터 저장
+  - getItem(key) - key에 해당하는 데이터 조회
+
+
+### vuex-persistedstate
+- Vuex state를 자동으로 브라우저의 Local Storage에 저장해주는 라이브러리 중 하나
+- 페이지가 새로고침 되어도 Vuex state를 유지시킴
+- Local Storage 에 저장된 data를 자동으로 state로 불러옴
+
+```
+$ npm i vuex-persistedstate
+```
+
+<img src="./Vue_img/local_storage.png">
+
+---
+
+# SUMMARY
+- Vuex
+- Lifecycle Hooks
+- Todo with Vuex
