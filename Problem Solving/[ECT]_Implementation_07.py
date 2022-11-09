@@ -13,50 +13,66 @@
 
 import sys
 from collections import deque
+
 sys.stdin = open('input.txt')
+input = sys.stdin.readline
 
 N = int(input())
 K = int(input())
 
-arr = [[0]*N for _ in range(N)]
+arr = [[0] * (N + 1) for _ in range(N + 1)]
 
 for _ in range(K):
-    i,j = map(int,input().split())
-    arr[i-1][j-1] = 1
+    i, j = map(int, input().split())
+    arr[i][j] = 1
 
 L = int(input())
 
-turns = deque()
+turns = []
 for _ in range(L):
     X, C = input().split()
-    turns.append((int(X),C))
+    turns.append((int(X), C))
 
-t = 0
-h_i,h_j = 0,0
-t_i,t_j = 0,0
-d = 0
-direc = [(0,1),(1,0),(0,-1),(-1,0)]
+t = 0               # 시간
+h_i, h_j = 1, 1     # 뱀머리위치
+arr[h_i][h_j] = 2   # 뱀있는곳 표시
+
+snake = deque()     # 꼬리위치 찾기위해 queue 사용
+snake.append((h_i, h_j))
+d = 0               # 상하좌우 방향 인덱스
+turn_idx = 0        # 방향 전환 정보 인덱스
+
+direc = [[0, 1], [1, 0], [0, -1], [-1, 0]]      # 우 하 좌 상
 while True:
-    t += 1
-    while turns:
-        time, direction = turns.popleft()
-        if t == time:
-            if direction == "D":
-                d = (d+1) % 4
-            elif direction == "L":
-                d = (d-1) % 4
 
-    if arr[h_i+direc[d][0]][h_j+direc[d][1]] == 1:
-        h_i += direc[d][0]
-        h_j += direc[d][1]
+    ni, nj = h_i + direc[d][0], h_j + direc[d][1]
+
+    if 1>ni or ni>N or 1>nj or nj>N or arr[ni][nj] == 2: # 벽 또는 몸과 부딪히면 게임끝
+        t += 1
+        break
     else:
-        h_i += direc[d][0]
-        h_j += direc[d][1]
-        t_i += direc[d][0]
-        t_j += direc[d][1]
+        if arr[ni][nj] == 1:    # 사과있으면 몸길이 그대로
+            arr[ni][nj] = 2
+            snake.append((ni, nj))
 
+        else:
+            arr[ni][nj] = 2     # 사과 없으면
+            snake.append((ni, nj))
+            t_i, t_j = snake.popleft()  # 꼬리위치 칸 비워줌
+            arr[t_i][t_j] = 0
+        t += 1
 
+    h_i, h_j = ni, nj   # 머리위치 이동
 
+    if turn_idx < len(turns):   # 방향전환 정보 확인
+        time, direction = turns[turn_idx]
+        if t==time: # 전환 시간이 되면 전환
+            if direction == "D":    # 시계방향
+                d = (d + 1) % 4
+            elif direction == "L":  # 반시계방향
+                d = (d - 1) % 4
+                if d<0:
+                    d +=4
+            turn_idx += 1
 
-
-
+print(t)
