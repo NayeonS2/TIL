@@ -34,23 +34,26 @@ for _ in range(L):
 t = 0
 h_i,h_j = 0,0
 t_i,t_j = 0,0
-di,dj = 0,1
+d = 0
+direc = [(0,1),(1,0),(0,-1),(-1,0)]
 while True:
     t += 1
     while turns:
         time, direction = turns.popleft()
         if t == time:
             if direction == "D":
-                di,dj = dj
+                d = (d+1) % 4
+            elif direction == "L":
+                d = (d-1) % 4
 
-    if arr[h_i+di][h_j+dj] == 1:
-        h_i += di
-        h_j += dj
+    if arr[h_i+direc[d][0]][h_j+direc[d][1]] == 1:
+        h_i += direc[d][0]
+        h_j += direc[d][1]
     else:
-        h_i += di
-        h_j += dj
-        t_i += di
-        t_j += dj
+        h_i += direc[d][0]
+        h_j += direc[d][1]
+        t_i += direc[d][0]
+        t_j += direc[d][1]
 
 
 
