@@ -5,6 +5,7 @@
 # 빈 공간 있는 경우 벽돌은 아래로 떨어짐
 # 최대한 많은 벽돌 제거하려할때 남은 벽돌 수 구하기
 # 중복순열 itertools product 이용
+
 import sys
 import itertools
 import copy
@@ -37,7 +38,6 @@ def down_block(new_block):
                 down_block[s_h][w] = new_block[h][w]
                 s_h -= 1
     return down_block
-
 
 T = int(input())
 
