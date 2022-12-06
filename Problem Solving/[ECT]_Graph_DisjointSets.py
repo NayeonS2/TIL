@@ -21,7 +21,7 @@ def union_parent(parent, a, b):
     else:
         parent[a] = b
 
-# 노드 개수와 간선(union 연산)수 입력받기
+# 노드 개수 v 와 간선(union 연산) e 수 입력받기
 v,e = map(int, input().split())
 parent = [0] * (v+1)
 
