@@ -1,4 +1,5 @@
 # 여행 계획
+
 import sys
 
 sys.stdin = open('input.txt')
