@@ -24,12 +24,16 @@ build_frame = [[0, 0, 0, 1], [2, 0, 0, 1], [4, 0, 0, 1], [0, 1, 1, 1], [1, 1, 1,
 
 def check(answer):
     for x, y, a in answer:
+        # 기둥이면
         if a == 0:
+            # 바닥 위 or 보 한쪽 끝 위 or 다른 기둥 위
             if y == 0 or [x - 1, y, 1] in answer or [x, y, 1] in answer or [x, y - 1, 0] in answer:
                 continue
             else:
                 return False
+        # 보면
         if a == 1:
+            # 한쪽 끝부분이 기둥위 or 양쪽 끝부분이 다른 보와 동시에 연결
             if [x, y - 1, 0] in answer or [x + 1, y - 1, 0] in answer or (
                     [x - 1, y, 1] in answer and [x + 1, y, 1] in answer):
                 continue
@@ -42,16 +46,19 @@ def solution(n, build_frame):
     for info in build_frame:
         x, y, a, b = info
 
+        # 삭제
         if b == 0:
+            # 삭제 후 check해서 불가능하면 다시 설치
             answer.remove([x, y, a])
             if not check(answer):
                 answer.append([x, y, a])
-
+        # 설치
         if b == 1:
+            # 설치 후 check해서 불가능하면 다시 제거
             answer.append([x, y, a])
             if not check(answer):
                 answer.remove([x, y, a])
-
+    # 정렬 후 출력
     answer = sorted(answer, key=lambda x: (x[0], x[1], x[2]))
     return answer
 
