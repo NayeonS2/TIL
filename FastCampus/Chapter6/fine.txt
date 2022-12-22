@@ -1,0 +1,12 @@
+12월 22, 2022 3:00:13 오전 ch11.MyLogger warning
+경고: name must not be null
+12월 22, 2022 3:00:13 오전 ch11.MyLogger warning
+경고: 이름이 너무 길어요
+12월 22, 2022 3:01:15 오전 ch11.MyLogger warning
+경고: name must not be null
+12월 22, 2022 3:01:16 오전 ch11.MyLogger warning
+경고: 이름이 너무 길어요
+12월 22, 2022 3:02:20 오전 ch11.MyLogger warning
+경고: name must not be null
+12월 22, 2022 3:02:20 오전 ch11.MyLogger warning
+경고: 이름이 너무 길어요

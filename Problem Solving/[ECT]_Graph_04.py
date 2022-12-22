@@ -1,4 +1,5 @@
 # 여행계획
+# 여행이 가능한지 확인
 
 import sys
 
@@ -22,13 +23,15 @@ def union_parent(parent, a, b):
 
 N, M = map(int, input().split())
 parent = [0] * (N + 1)
+# 간선정보
 edges = []
 
+# 인접행렬
 arr = [list(map(int, input().split())) for _ in range(N)]
-
+# 여행계획
 plan = list(map(int,input().split()))
 
-# 연결된 간선 찾기
+# 연결된 간선 찾기 (인접행렬)
 for i in range(1, N + 1):
     for j in range(1, N + 1):
         if arr[i-1][j-1] == 1:
@@ -43,6 +46,7 @@ for edge in edges:
 result = []
 for node in plan:
     result.append(find_parent(parent,node))
+
 if len(set(result)) == 1:
     print("YES")
 else:

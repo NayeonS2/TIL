@@ -1,4 +1,6 @@
 # 어두운 길
+# 일부 가로등 비활성화하여 절약할 수 있는 최대 금액
+# mst
 
 import sys
 sys.stdin = open('input.txt')
@@ -36,8 +38,9 @@ for edge in edges:
     cost,a,b = edge
     if find_parent(parent,a) != find_parent(parent,b):
         union_parent(parent,a,b)
-        money += cost
+        #money += cost
     else:
+        # 절약된 금액 구하기 위해 else일때만 saving 갱신
         saving += cost
 
 print(saving)
