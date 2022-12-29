@@ -1,6 +1,8 @@
 # 경쟁적 전염
 # 1초당 상하좌우 1칸씩 S초동안 바이러스 타입별로 !동시에! 전염 (bfs!)
+
 # 숫자가 작은 것이 더 전염시 우위선점 -> heapq 사용
+
 # S초후 (X-1,Y-1) 위치의 바이러스 종류 구하기
 
 import sys,heapq
@@ -18,6 +20,7 @@ def bfs():
     for i in range(N):
         for j in range(N):
             if arr[i][j] != 0:
+                # 숫자가 있을때 heappush (출발지)
                 num = arr[i][j]
                 heapq.heappush(q, (num, (i, j)))
     # S초동안
@@ -33,6 +36,7 @@ def bfs():
                     arr[ni][nj] = num
                     # virus 배열에 넣어뒀다가
                     virus.append((num, (ni, nj)))
+        # 1초당 상하좌우 1칸씩이니깐,
         # 1초가 지나는 시점에 한꺼번에 heappush!
         for vir in virus:
             heapq.heappush(q, vir)

@@ -8,3 +8,58 @@
 # 연합을 이루고 있는 각 칸의 인구수는 (연합의 인구수) / (연합을 이루고 있는 칸의 개수)가 된다. 편의상 소수점은 버린다.
 # 연합을 해체하고, 모든 국경선을 닫는다.
 # 각 나라의 인구수가 주어졌을 때, 인구 이동이 며칠 동안 발생하는지 구하는 프로그램을 작성하시오.
+
+import sys
+from collections import deque
+sys.stdin = open('input.txt')
+input = sys.stdin.readline
+
+N,L,R = map(int,input().split())
+
+arr = [list(map(int,input().split())) for _ in range(N)]
+visited = [[0]*N for _ in range(N)]
+people = 0
+union = []
+cnt = 0
+def bfs(i,j):
+    global people, cnt
+
+    q = deque()
+    q.append((i,j))
+    visited[i][j] = 1
+    people += arr[i][j]
+    union.append((i,j))
+    while q:
+        i,j = q.popleft()
+
+        for di,dj in [[-1,0],[1,0],[0,-1],[0,1]]:
+            ni,nj = i+di,j+dj
+            if 0<=ni<N and 0<=nj<N and visited[ni][nj]==0 and L<=abs(arr[i][j]-arr[ni][nj])<=R:
+                union.append((ni,nj))
+                people+=arr[ni][nj]
+                visited[ni][nj] = 1
+                q.append((ni,nj))
+    for i,j in union:
+        arr[i][j] = people//len(union)
+    else:
+        cnt+=1
+
+result = 0
+
+while True:
+    visited = [[0] * N for _ in range(N)]
+    done = 0
+    for i in range(N):
+        for j in range(N):
+            if visited[i][j] == 0:
+                bfs(i,j)
+                done+=1
+                union = []
+                people = 0
+
+    if done == N*N:
+        break
+    result += 1
+
+#print(arr)
+print(result)
