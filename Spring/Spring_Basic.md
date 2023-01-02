@@ -1,8 +1,11 @@
 # Spring
+
 ## 라이브러리 살펴보기
+
 > Gradle은 의존관계가 있는 라이브러리를 함께 다운로드 함
 
 ### 스프링 부트 라이브러리
+
 - `spring-boot-starter-web`
   - spring-boot-starter-tomcat: 톰캣 (웹서버)
   - spring-webmvc: 스프링 웹 MVC
@@ -14,6 +17,7 @@
     - logback, slf4j
 
 ### 테스트 라이브러리
+
 - spring-boot-start-test
   - junit: 테스트 프레임워크
   - mockito: 목 라이브러리
@@ -23,6 +27,7 @@
 ---
 
 ## View 환경설정
+
 ### Welcom Page 만들기
 
 ```html
@@ -40,6 +45,7 @@ Hello
 </body>
 </html>
 ```
+
 - 스프링 부트가 제공하는 Welcome Page 기능
   - static/index.html 을 올려두면 Welcome page 기능을 제공한다
 
