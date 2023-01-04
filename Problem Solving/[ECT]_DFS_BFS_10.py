@@ -1,64 +1,65 @@
 # 블록 이동하기
-
+# 가로
 # [(i,j),(i,j+1)] 상하좌우 -> [(i-1,j),(i-1,j+1)], [(i+1,j),(i+1,j+1)] ,[(i,j-1),(i,j)], [(i,j+1),(i,j+2)]
 # 90도 시계, 반시계 -> [(i,j),(i+1,j)], [(i+1,j+1),(i,j+1)]
+# 세로
 
-board = [[0, 0, 0, 1, 1],[0, 0, 0, 1, 0],[0, 1, 0, 1, 1],[1, 1, 0, 0, 1],[0, 0, 0, 0, 0]]
+input = [[0, 0, 0, 1, 1], [0, 0, 0, 1, 0], [0, 1, 0, 1, 1], [1, 1, 0, 0, 1], [0, 0, 0, 0, 0]]
 
 from collections import deque
 
-def bfs(i,j,board):
-    cnt = 0
-    N = len(board)
-    visited = [[-1]*N for _ in range(N)]
-    q = deque()
-    q.append([(i,j),(i,j+1)])
-    visited[i][j] = 1
-    visited[i][j+1] = 1
-    while q:
-        now = q.popleft()
-        l,r = now[0],now[1]
 
+def next_pos(pos, board):
+    (i1, j1), (i2, j2) = pos
 
-        if l == (N-1,N-1) or r == (N-1,N-1):
-            return cnt
+    pos_list = []
 
-        for dir in [[(l[0]-1,l[1]),(r[0]-1,r[1])], [(l[0]+1,l[1]),(r[0]+1,r[1])] ,[(l[0],l[1]-1),(r[0],r[1]-1)], [(l[0],l[1]+1),(r[0],r[1]+1)], [(l[0],l[1]),(r[0]+1,r[1]-1)], [(l[0]+1,l[1]+1),(r[0],r[1])]]:
-                n_l,n_r = dir[0],dir[1]
+    for di, dj in [[-1, 0], [1, 0], [0, -1], [0, 1]]:
+        n_i1, n_j1, n_i2, n_j2 = i1 + di, j1 + dj, i2 + di, j2 + dj
+        if board[n_i1][n_j1] == 0 and board[n_i2][n_j2] == 0:
+            pos_list.append({(n_i1, n_j1), (n_i2, n_j2)})
 
-                # 가로방향
+    if i1 == i2:
+        for d in [1, -1]:
+            if board[i1 + d][j1] == 0 and board[i2 + d][j2] == 0:
+                pos_list.append({(i1, j1), (i1 + d, j1)})
+                pos_list.append({(i2, j2), (i2 + d, j2)})
 
-                if [n_l,n_r] == [(l[0],l[1]),(r[0]+1,r[1]-1)]:
+    elif j1 == j2:
+        for d in [1, -1]:
+            if board[i1][j1 + d] == 0 and board[i2][j2 + d] == 0:
+                pos_list.append({(i1, j1), (i1, j1 + d)})
+                pos_list.append({(i2, j2), (i2, j2 + d)})
 
-                    if 0 <= n_l[0] < N and 0 <= n_r[0] < N and 0 <= n_l[1] < N and 0 <= n_r[1] < N and 0 <= n_l[0]+1 < N and 0 <= n_l[1]+1 < N:
-                        if board[n_l[0]][n_l[1]] != 1 and board[n_r[0]][n_r[1]] != 1 and board[n_l[0]+1][n_l[1]+1]!=1 and visited[n_l[0]][n_l[1]] != 1 and visited[n_r[0]][n_r[1]] != 1:
-                            cnt += 1
-                            q.append([n_l,n_r])
-
-
-                if [n_l,n_r] == [(l[0]+1,l[1]+1),(r[0],r[1])]:
-                    if 0 <= n_l[0] < N and 0 <= n_r[0] < N and 0 <= n_l[1] < N and 0 <= n_r[1] < N and  0 <= n_l[0]+1 < N:
-                        if board[n_l[0]][n_l[1]] != 1 and board[n_r[0]][n_r[1]] != 1 and board[n_l[0]+1][n_l[1]]!=1 and visited[n_l[0]][n_l[1]] != 1 and visited[n_r[0]][n_r[1]] != 1:
-                            cnt += 1
-                            q.append([n_l,n_r])
-
-
-                # 세로방향
-
-
-
-
-                # 상하좌우
-                if [n_l,n_r] == [(l[0]-1,l[1]),(r[0]-1,r[1])] or [(l[0]+1,l[1]),(r[0]+1,r[1])] or[(l[0],l[1]-1),(r[0],r[1]-1)] or [(l[0],l[1]+1),(r[0],r[1]+1)]:
-                    if 0 <= n_l[0] < N and 0 <= n_r[0] < N and 0 <= n_l[1] < N and 0 <= n_r[1] < N:
-                        if board[n_l[0]][n_l[1]] != 1 and board[n_r[0]][n_r[1]] != 1 and visited[n_l[0]][n_l[1]] != 1 and visited[n_r[0]][n_r[1]] != 1:
-                            cnt += 1
-                            q.append([n_l,n_r])
-
+    return pos_list
 
 
 def solution(board):
-    answer = bfs(0,0,board)
-    return answer
+    n = len(board)
 
-print(solution(board))
+    new_board = [[1] * (n + 2) for _ in range(n + 2)]
+    for i in range(1, n + 1):
+        for j in range(1, n + 1):
+            new_board[i][j] = board[i - 1][j - 1]
+
+    pos = {(1, 1), (1, 2)}
+
+    visited = []
+    q = deque()
+    q.append((pos, 0))
+    visited.append(pos)
+
+    while q:
+        pos, time = q.popleft()
+
+        if (n, n) in pos:
+            return time
+
+        for now in next_pos(pos, new_board):
+            if now not in visited:
+                visited.append(now)
+                q.append((now, time + 1))
+
+
+
+print(solution(input))
