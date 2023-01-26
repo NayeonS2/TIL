@@ -1,4 +1,4 @@
-# 감소하는 수
+# 감소하는 수 (백트래킹)
 
 N = int(input())
 from itertools import combinations
