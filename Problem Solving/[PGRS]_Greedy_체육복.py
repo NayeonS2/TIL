@@ -9,6 +9,7 @@ def solution(n, lost, reserve):
 
     reserve.sort()
 
+    # 배열 값 변경되면 순회할때 문제생김 (얕은복사 이용)
     for resv in reserve[:]:
         if resv in lost:
             reserve.remove(resv)
