@@ -1,3 +1,5 @@
+# 엘유플 1번
+
 from itertools import combinations
 
 weight = [100, 50, 50, 80, 40, 40]
