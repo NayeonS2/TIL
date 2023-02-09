@@ -1,11 +1,16 @@
-numbers = [232,23]
+numbers = [303,30]
 def solution(numbers):
-    if set(numbers) == {numbers[0]}:
+    if set(numbers) == {0}:
         numbers = list(set(numbers))
 
+    tmp = []
+    for num in numbers:
+        tmp.append(((str(num)*4)[:4],num))
+    tmp.sort(reverse=True)
 
-    numbers.sort(key=lambda x: (-int((str(x)+'0'*(3-len(str(x))))[-3]),-int((str(x)+'0'*(3-len(str(x))))[-2]),-int((str(x)+'0'*(3-len(str(x))))[-1])))
-
-    return ''.join(map(str,numbers))
+    answer = []
+    for n in tmp:
+        answer.append(n[1])
+    return ''.join(map(str,answer))
 print(solution(numbers))
 
