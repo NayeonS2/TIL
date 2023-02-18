@@ -6,7 +6,7 @@ itemY = 8
 # 1,1 / 1,3 / ... 1,7 -> (x_l,y_l~y_r)
 # 1,1 / 2,1, ... 4,1 -> (x_l~x_r, y_l)
 # 1,7 / 2,7 / 3,7 / 4,7 -> (x_l~x_r, y_r)
-# 4,1 / 4,2 / 4,3 / ... 4,7 -> (x_r, y_l~y_r)
+# 4,1 / 4,2 / 4,3 /... 4,7 -> (x_r, y_l~y_r)
 from collections import deque
 def solution(rectangle, characterX, characterY, itemX, itemY):
 
