@@ -1,62 +1,53 @@
-users = [[40, 10000], [25, 10000]]
-emoticons = [7000, 9000]
+users = [[40, 2900], [23, 10000], [11, 5200], [5, 5900], [40, 3100], [27, 9200], [32, 6900]]
+emoticons = [1300, 1500, 1600, 4900]
 
 def solution(users, emoticons):
     answer = []
 
-    max_users = 0
+    max_user = 0
     max_profit = 0
 
 
     discount = [10,20,30,40]
-    visited = [0] * len(discount)
-    disc_comb = []
-    def dfs(cnt):
-        global max_users, max_profit
 
+    disc_combs = []
 
+    def dfs(cnt,poss_comb):
         if cnt == len(emoticons):
-            tmp_users = 0
-            tmp_pay_sum = 0
-            for user in users:
-                discount_std = user[0]
-                paying_limit = user[1]
+            disc_combs.append(poss_comb[:])
+            return
 
-                tmp_paying = 0
+        for disc in discount:
+                poss_comb[cnt] += disc
+                dfs(cnt + 1,poss_comb)
+                poss_comb[cnt] -= disc
+
+    dfs(0,[0]*len(emoticons))
+
+    for i in range(len(disc_combs)):
+            user_cnt = 0
+            profit = [0]*len(users)
+
+            for j in range(len(emoticons)):
+                for k in range(len(users)):
+                    if users[k][0] <= disc_combs[i][j]:
+                        profit[k] += emoticons[j]*(100-disc_combs[i][j])//100
 
 
-                if tmp_paying > paying_limit:
-                    tmp_users += 1
-                    tmp_paying = 0
+            for k in range(len(users)):
+                if profit[k] >= users[k][1]:
+                    user_cnt += 1
+                    profit[k] = 0
 
+            if user_cnt >= max_user:
+                if user_cnt == max_user:
+                    max_profit = max(sum(profit),max_profit)
                 else:
+                    max_profit = sum(profit)
 
-                    for i in range(len(emoticons)):
+                max_user = user_cnt
 
-                        now_disc = disc_comb[i]
-                        now_price = emoticons[i]
-
-                        if discount_std <= now_disc:
-                            tmp_paying += now_price*(1-now_disc//100)
-
-                tmp_pay_sum += tmp_paying
-
-
-        for idx, disc in enumerate(discount):
-            if visited[idx] == 0:
-                disc_comb.append(disc)
-                visited[idx] = 1
-
-                dfs(cnt+1)
-
-                visited[idx] = 0
-                disc_comb.remove(disc)
-
-
-    dfs(0)
-
-    answer = [max_users,max_profit]
-
+    answer = [max_user,max_profit]
     return answer
 
 print(solution(users,emoticons))
