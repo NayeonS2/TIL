@@ -17,8 +17,8 @@ def solution(cap, n, deliveries, pickups):
         pick += pickups[i]
 
         while deliv>0 or pick>0:    # 배달 or 수거 해야할 것 있으면 그 위치로 이동
-            deliv -= cap            # cap을 뺀 값이 모두 음수면, 해당 배달or수거할 양이 한번에 옮길 수 있는 양보다 적은것
-            pick -= cap             # -> 왕복 도중에 추가적 배달or수거 가능
+            deliv -= cap            # cap을 뺀 값이 모두 음수면, 해당 배달 or 수거할 양이 한번에 옮길 수 있는 양보다 적은것
+            pick -= cap             # -> 왕복 도중에 추가적 배달 or 수거 가능
             answer += (i+1)*2
 
     return answer
