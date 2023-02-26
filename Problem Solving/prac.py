@@ -1,31 +1,40 @@
-tickets = [["ICN", "JFK"], ["HND", "IAD"], ["JFK", "HND"]]
+n = 6
+edge = [[3, 6], [4, 3], [3, 2], [1, 3], [1, 2], [2, 4], [5, 2]]
 
-def solution(tickets):
+from collections import deque
+def solution(n, edge):
+    answer = 0
 
-    route = []
+    adjList= [[] for _ in range(n+1)]
 
-    adjList = dict()
+    visited = [-1] *(n+1)
 
-    for ticket in tickets:
-        adjList[ticket[0]] = []
-    for ticket in tickets:
-        adjList[ticket[0]].append(ticket[1])
-    for ticket in tickets:
-        adjList[ticket[0]].sort(reverse=True)
+    for vert in edge:
+        adjList[vert[0]].append(vert[1])
+        adjList[vert[1]].append(vert[0])
 
-    def dfs():
-        stack = ["ICN"]
 
-        while stack:
-            now = stack[-1]
+    def bfs(v):
+        cnt = 0
+        q = deque()
+        q.append((v,cnt))
 
-            if now not in adjList or len(adjList[now]) == 0:
-                route.append(stack.pop())
-            else:
-                stack.append(adjList[now].pop())
+        while q:
+            now, cnt = q.popleft()
 
-    dfs()
+            if visited[now] == -1:
 
-    return route[::-1]
+                visited[now] = cnt
+                cnt += 1
+                for next in adjList[now]:
+                    q.append((next,cnt))
 
-print(solution(tickets))
+    bfs(1)
+
+    for n in visited:
+        if n == max(visited):
+            answer += 1
+
+    return answer
+
+print(solution(n,edge))
