@@ -1,41 +1,46 @@
-import sys
+import sys,heapq
+
 sys.stdin = open('input.txt')
 
 T = int(input())
 
+def dijkstra(i,j):
+    q = []
+    heapq.heappush(q,(0,i,j))
+    distance[0][0] = 0
+
+
+    while q:
+        dist,i,j = heapq.heappop(q)
+
+        if distance[i][j] < dist:
+            continue
+
+        for di,dj in [[-1,0],[1,0],[0,-1],[0,1]]:
+
+            ni,nj = i+di, j+dj
+
+            if 0<=ni<N and 0<=nj<N:
+
+                tmp = max(0,arr[ni][nj]-arr[i][j])+1
+                cost = dist+tmp
+                if cost<distance[ni][nj]:
+                    distance[ni][nj] = cost
+
+                    heapq.heappush(q,(cost,ni,nj))
+
+
+
 for tc in range(1,T+1):
-    N,M = map(int,input().split())
+    N = int(input())
 
-    parent = [0]*(N+1)
+    arr = [list(map(int,input().split())) for _ in range(N)]
 
-    for i in range(1,N+1):
-        parent[i] = i
+    INF = int(1e9)
+    distance = [[INF]*(N) for _ in range(N)]
 
-    def find_parent(parent,x):
-        if parent[x] != x:
-            parent[x] = find_parent(parent,parent[x])
+    dijkstra(0,0)
 
-        return parent[x]
-
-    def union_parent(parent,a,b):
-
-        a = find_parent(parent,a)
-        b = find_parent(parent,b)
-
-        if a<b:
-            parent[b] = a
-        elif b<a:
-            parent[a] = b
+    print(f'#{tc} {distance[N-1][N-1]}')
 
 
-    info = list(map(int,input().split()))
-
-    for i in range(0,len(info),2):
-        a,b = info[i:i+2][0], info[i:i+2][1]
-        union_parent(parent,a,b)
-
-    ans = set()
-
-    for i in parent:
-        ans.add(find_parent(parent,i))
-    print(f'#{tc} {len(ans)-1}')
