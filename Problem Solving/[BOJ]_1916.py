@@ -1,4 +1,4 @@
-# 최소비용 구하기
+# 최소비용구하기
 
 import sys, heapq
 sys.stdin = open('input.txt')
