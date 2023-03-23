@@ -1,63 +1,91 @@
+# 리모컨
+
 import sys
-from itertools import combinations
+from itertools import product
 sys.stdin = open('input.txt')
+input = sys.stdin.readline
 
-T = int(input())
+res = 0
+N = int(input())
+len_n = len(list(str(N)))
+M = int(input())
 
-def find_parent(parent,x):
-    if parent[x]!=x:
-        parent[x] = find_parent(parent,parent[x])
-    return parent[x]
+if M == 0:
+    channel = [x for x in range(0,10)]
+else:
+    broken = list(map(int,input().split()))
 
-def union_parent(parent,a,b):
-    a = find_parent(parent,a)
-    b = find_parent(parent,b)
+    channel = []
 
-    if a<b:
-        parent[b] = a
+    for x in range(0,10):
+        if x not in broken:
+            channel.append(x)
+
+if len(channel) == 0:
+    res = abs(N-100)
+    print(res)
+
+else:
+    posss = []
+    poss = set()
+    for i in range(1,len_n+2):
+
+        posss += list(product(channel,repeat=i))
+
+    for tm in posss:
+        tmp = ''
+        for x in tm:
+            tmp += str(x)
+        tmp_pos = int(tmp)
+        #tmp_pos = int(''.join(list(map(str, tm))))
+        poss.add(tmp_pos)
+
+
+    min_diff = 987654321
+    str_poss = []
+    for now_N in poss:
+        # pos = list(map(str,pos))
+        # now_N = int(''.join(pos))
+        now_diff = abs(now_N-N)
+        if now_diff < min_diff:
+            min_diff = now_diff
+
+    for now_N in poss:
+        # pos = list(map(str,pos))
+        # now_N = int(''.join(pos))
+        now_diff = abs(now_N-N)
+        if now_diff == min_diff:
+            str_poss.append(now_N)
+
+    if len(str_poss) == 0:
+        start = 100
+        start_len = len(list(str(start)))
+        res = abs(N - start) + start_len
+        if abs(N - 100) < res:
+            print(abs(N - 100))
+        else:
+            print(res)
+
+    elif len(str_poss) == 1:
+        start = str_poss[0]
+        start_len = len(list(str(start)))
+        res = abs(N - start) + start_len
+        if abs(N - 100) < res:
+            print(abs(N - 100))
+        else:
+            print(res)
+
     else:
-        parent[a] = b
-
-
-
-for tc in range(1,1+T):
-    N = int(input())
-
-    parent = [0]*(N)
-
-    for i in range(N):
-        parent[i] = i
-
-    x = list(map(int,input().split()))
-    y = list(map(int,input().split()))
-
-    E = float(input())
-
-    tmp = []
-
-    for i in range(N):
-        tmp.append((i,x[i],y[i]))
-
-    combs = list(combinations(tmp,2))
-
-    edges = []
-
-    for comb in combs:
-        L = (comb[0][1]-comb[1][1])**2 + (comb[0][2]-comb[1][2])**2
-        w = E * L
-        edges.append((w,comb[0][0],comb[1][0]))
-
-    edges.sort()
-
-    result = 0
-    for edge in edges:
-        a,b = edge[1],edge[2]
-
-        if find_parent(parent,a) != find_parent(parent,b):
-            union_parent(parent,a,b)
-            result += edge[0]
-    print(f'#{tc} {int(result)}')
-
+        min_res = 987654321
+        for x in str_poss:
+            start = x
+            start_len = len(list(str(start)))
+            res = abs(N - start) + start_len
+            min_res = min(min_res,res)
+        if abs(N - 100) < min_res:
+            print(abs(N - 100))
+        else:
+            print(min_res)
 
 
 
