@@ -1,7 +1,7 @@
 # AC
 # 함수 R은 배열에 있는 수의 순서를 뒤집는 함수 (아이디어 떠올리는게 핵심!!!!)
 # D는 첫 번째 수를 버리는 함수
-# 배열이 비어있는데 D를 사용한 경우에는 에러가 발생 (error)
+# 배열이 비어있는데 D를 사용한 경우에는 에러가 발생 (error로 출력)
 
 import sys
 from collections import deque
