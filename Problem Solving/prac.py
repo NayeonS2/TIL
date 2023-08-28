@@ -1,25 +1,56 @@
 import sys
+from itertools import combinations
 sys.stdin = open('input.txt')
 
-N,M = map(int,input().split())
-nums = [x for x in range(1,N+1)]
-visited = [-1]*N
+L,C = map(int,input().split())
 
-def dfs(cnt,lst):
+chars = list(input().split())
 
-    if cnt == M:
-        print(*lst)
 
-    else:
-        for i,n in enumerate(nums):
-            if visited[i] == -1:
-                lst.append(n)
-                visited[i] = 1
-                dfs(cnt+1,lst)
-                visited[i] = -1
-                lst.pop()
 
-dfs(0,[])
+alphs = [chr(c) for c in range(ord('a'),ord('z')+1)]
+
+moum = ['a', 'e', 'i', 'o', 'u']
+jaum = list(set(alphs) - set(moum))
+
+combs = list(combinations(alphs,L))
+
+def moum_chk(txt):
+    cnt = 0
+
+    for m in moum:
+        if m in txt:
+            cnt += 1
+
+    if cnt > 0:
+        return True
+
+
+def jaum_chk(txt):
+
+    cnt = 0
+
+    for j in jaum:
+        if cnt > 2:
+            break
+
+        if j in txt:
+            cnt += 1
+
+
+    if cnt >= 2:
+        return True
+
+
+
+for comb in combs:
+
+    if comb == sorted(comb) and moum_chk(comb) and jaum_chk(comb):
+        print(comb)
+
+
+
+
 
 
 
